@@ -4,8 +4,8 @@ import re
 # Chạy lệnh crontab -l để lấy nội dung crontab hiện tại
 try:
     crontab_output = subprocess.check_output(["crontab", "-l"], stderr=subprocess.STDOUT, text=True)
-    print("Nội dung crontab:")
-    print(crontab_output)
+    # print("Nội dung crontab:")
+    # print(crontab_output)
 
     # Tìm các dòng lập lịch chứa các ký tự đặc biệt hoặc chuỗi cụ thể
     lines = crontab_output.split('\n')
@@ -50,10 +50,10 @@ try:
         elif is_shell_related:
             print("Used to run a shell on the system")
             print(line)
-        else:
-            print("Dòng lập lịch nghi ngờ độc hại:")
-            print(line)
-        
+        # else:
+        #     print("Dòng lập lịch nghi ngờ độc hại:")
+        #     print(line)
+        print()
 
 except subprocess.CalledProcessError as e:
     print(f"Lỗi: {e.returncode}\n{e.output}")
