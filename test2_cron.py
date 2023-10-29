@@ -15,7 +15,7 @@ try:
         is_common_command = False
         is_long = False
         is_encoded = False
-
+        is_shell_related = False
         # Kiểm tra độ dài dòng lập lịch
         if len(line) > 100:
             is_long = True
@@ -32,8 +32,11 @@ try:
         if re.search(r'(\^M|base64)', line):
             is_encoded = True
 
+        if re.search(r'(\*|\|*sh|\*sh -c)', line):
+            is_shell_related = True
+
         if is_long:
-            print("Dòng lập lịch có độ dài trên 100 ký tự:")
+            print("Very long strings, which may indicate encoding:")
             print(line)
         elif is_malicious:
             print("Malicious code often exists in this directory:")
@@ -42,11 +45,15 @@ try:
             print("These are commonly used commands to connect to the internet:")
             print(line)
         elif is_encoded:
-            print("Dòng lập lịch chứa ký tự mã hóa:")
+            print("Insert and encode commands:")
+            print(line)
+        elif is_shell_related:
+            print("Used to run a shell on the system")
             print(line)
         else:
-            print("Dòng lập lịch chứa ký tự đặc biệt hoặc chuỗi cụ thể:")
+            print("Dòng lập lịch nghi ngờ độc hại:")
             print(line)
+        
 
 except subprocess.CalledProcessError as e:
     print(f"Lỗi: {e.returncode}\n{e.output}")
