@@ -17,7 +17,7 @@ try:
         is_encoded = False
         is_shell_related = False
         # Kiểm tra độ dài dòng lập lịch
-        if len(line) > 100:
+        if len(line) > 200:
             is_long = True
 
         # Kiểm tra nếu dòng lập lịch chứa "/tmp"
