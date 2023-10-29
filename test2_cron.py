@@ -32,7 +32,7 @@ try:
         if re.search(r'(\^M|base64)', line):
             is_encoded = True
 
-        if re.search(r'(\*|\|*sh|\*sh -c)', line):
+        if re.search(r'(\|*sh|\*sh -c)', line):
             is_shell_related = True
 
         if is_long:
