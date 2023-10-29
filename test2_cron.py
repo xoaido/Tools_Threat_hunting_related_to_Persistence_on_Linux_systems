@@ -25,7 +25,7 @@ try:
             is_malicious = True
 
         # Kiểm tra nếu dòng lập lịch chứa các lệnh "curl", "@", "dig", "http?://*", "nc", "wget"
-        if re.search(r'(curl|@|dig|http\?://\*|nc|wget)', line):
+        if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
             is_common_command = True
 
         # Kiểm tra nếu dòng lập lịch chứa ký tự mã hóa như "^M" hoặc "base64"
@@ -38,18 +38,23 @@ try:
         if is_long:
             print("Very long strings, which may indicate encoding:")
             print(line)
+            print()
         elif is_malicious:
             print("Malicious code often exists in this directory:")
             print(line)
+            print()
         elif is_common_command:
             print("These are commonly used commands to connect to the internet:")
             print(line)
+            print()
         elif is_encoded:
             print("Insert and encode commands:")
             print(line)
+            print()
         elif is_shell_related:
             print("Used to run a shell on the system")
             print(line)
+            print()
         # else:
         #     print("Dòng lập lịch nghi ngờ độc hại:")
         #     print(line)
