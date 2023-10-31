@@ -16,7 +16,6 @@ suspicious_command_patterns = [
     r"touch\s+.*",
     r"cat\s+.*>>\s+.*",
     r"nc\s+-lvp\s+.*" ,
-    r"dd\s+.*",
     r"mkfs\s+.*",
     r"mknod\s+.*",
     r"tar\s+.*",
