@@ -14,14 +14,15 @@ suspicious_command_patterns = [
     r"echo\s+.*>\s+.*",
     r"touch\s+.*",
     r"cat\s+.*>>\s+.*",
+    r"nc\s+-lvp\s+.*" ,
     r"dd\s+.*",
     r"mkfs\s+.*",
     r"mknod\s+.*",
     r"tar\s+.*",
-    # Thêm các mẫu tấn công khác ở đây
+    # Add other persistent attack patterns here
 ]
 
-# Danh sách các mẫu nghi ngờ cho mã hóa
+# List of suspicious patterns for encoding
 suspicious_encoding_patterns = [
     r"base64\s+.*",
     r"gzip\s+.*",
@@ -29,7 +30,23 @@ suspicious_encoding_patterns = [
     r"openssl\s+.*",
     r"xxd\s+.*",
     r"uudecode\s+.*",
-    # Thêm các mẫu mã hóa khác ở đây
+    # Add other encoding patterns here
+    r"tar\s+.*",
+    r"zip\s+.*",
+    r"7z\s+.*",
+    r"rot13\s+.*",
+    r"yenc\s+.*",
+    r"bzcat\s+.*",
+    r"unzip\s+.*",
+    r"gunzip\s+.*",
+    r"taz\s+.*",
+    r"shar\s+.*",
+    r"rar\s+.*",
+    r"lzma\s+.*",
+    r"lzcat\s+.*",
+    r"lzop\s+.*",
+    r"lzopcat\s+.*",
+    # Add more encoding patterns here
 ]
 
 # Kết hợp các mẫu nghi ngờ
