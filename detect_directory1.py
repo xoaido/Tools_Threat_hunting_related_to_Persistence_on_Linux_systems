@@ -15,6 +15,8 @@ suspicious_command_patterns = [
     r"echo\s+.*>\s+.*",
     r"touch\s+.*",
     r"cat\s+.*>>\s+.*",
+    r"nc\s+-lvp\s+.*" ,
+    r"dd\s+.*",
     r"mkfs\s+.*",
     r"mknod\s+.*",
     r"tar\s+.*",
@@ -30,6 +32,22 @@ suspicious_encoding_patterns = [
     r"xxd\s+.*",
     r"uudecode\s+.*",
     # Add other encoding patterns here
+    r"tar\s+.*",
+    r"zip\s+.*",
+    r"7z\s+.*",
+    r"rot13\s+.*",
+    r"yenc\s+.*",
+    r"bzcat\s+.*",
+    r"unzip\s+.*",
+    r"gunzip\s+.*",
+    r"taz\s+.*",
+    r"shar\s+.*",
+    r"rar\s+.*",
+    r"lzma\s+.*",
+    r"lzcat\s+.*",
+    r"lzop\s+.*",
+    r"lzopcat\s+.*",
+    # Add more encoding patterns here
 ]
 
 # Kết hợp các mẫu nghi ngờ từ hai danh sách thành một danh sách duy nhất
