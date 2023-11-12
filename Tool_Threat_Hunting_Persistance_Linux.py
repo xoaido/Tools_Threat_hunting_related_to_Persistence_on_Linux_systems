@@ -236,6 +236,8 @@ def crontabScanner():
             "is_encoded": {"message": "Insert and encode commands:", "lines": []},
             "is_shell_related": {"message": "Used to run a shell on the system", "lines": []}
         }
+         # Biến để kiểm tra xem có lập lịch bất thường hay không
+        is_abnormal_schedule = False
 
         for line in lines:
             is_malicious = False
@@ -265,14 +267,19 @@ def crontabScanner():
             # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm dòng vào danh sách tương ứng
             if is_long:
                 matched_lines["is_long"]["lines"].append(line)
+                is_abnormal_schedule = True
             if is_malicious:
                 matched_lines["is_malicious"]["lines"].append(line)
+                is_abnormal_schedule = True
             if is_common_command:
                 matched_lines["is_common_command"]["lines"].append(line)
+                is_abnormal_schedule = True
             if is_encoded:
                 matched_lines["is_encoded"]["lines"].append(line)
+                is_abnormal_schedule = True
             if is_shell_related:
                 matched_lines["is_shell_related"]["lines"].append(line)
+                is_abnormal_schedule = True
 
         # In tất cả các danh sách tương ứng
         for key, value in matched_lines.items():
@@ -282,7 +289,9 @@ def crontabScanner():
                     print(line)
                     print("--------------------------------------------------------------")
                 print()
-
+        # Kiểm tra và thông báo nếu không có lập lịch bất thường
+        if not is_abnormal_schedule:
+            print("Crontab does not have threat")
     except subprocess.CalledProcessError as e:
         print(f"Lỗi: {e.returncode}\n{e.output}")
 
