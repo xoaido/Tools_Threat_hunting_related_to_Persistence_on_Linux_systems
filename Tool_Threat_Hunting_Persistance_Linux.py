@@ -218,7 +218,6 @@ def sshScanner(keys, hours):
     else:
         print("\n==> Check SSH done: Find some anonymous activities above")    
 
-
 def crontabScanner():
     print("\n[*]----------------------[[ CronTab Scan ]]----------------------[*]")
     # Chạy lệnh crontab -l để lấy nội dung crontab hiện tại
