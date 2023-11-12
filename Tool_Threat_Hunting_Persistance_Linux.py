@@ -290,8 +290,10 @@ def crontabScanner():
                     print("--------------------------------------------------------------")
                 print()
         # Kiểm tra và thông báo nếu không có lập lịch bất thường
-        if not is_abnormal_schedule:
-            print("Crontab does not have threat")
+        if is_abnormal_schedule:
+            print("======>Crontab does have threat")
+        else:
+            print("======>Crontab does not have threat")
     except subprocess.CalledProcessError as e:
         print(f"Lỗi: {e.returncode}\n{e.output}")
 
