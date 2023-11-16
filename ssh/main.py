@@ -48,9 +48,8 @@ Function cũ: không sử dụng
 #         print("No anonymous activities here!")
 #     return result
 '''
-# Function : Find authorized_key2
+# Function 1: Find authorized_key2
 def find_ssh_authorized_keys2_search(home_dirs):
-    # result = True: not exist any anonmyous activities
     result = True
     for dir in home_dirs:
         authorized_keys2_path = os.path.join(dir, '.ssh', 'authorized_keys2')
@@ -64,22 +63,30 @@ def find_ssh_authorized_keys2_search(home_dirs):
 
 
 
-# Function 1: Check /etc/ssh/sshd_config option, PasswordAuthentication no/yes
+# Function 2: Check /etc/ssh/sshd_config option, PasswordAuthentication no/yes
 
 def check_ssh_config():
-    result = True
-    
+    result = True 
     file_path = "/etc/ssh/sshd_config"
-    
+    if os.path.isfile(file_path):
+        with open(file_path, "r") as file:
+            contents = file.read().lower()
+            # Case 1: PermitRootLogin yes --> allow Remote root login via SSH
+            x = re.search("\n[^\#]*permitrootlogin\s+yes", contents)
+            if x:
+                result = False
+                print("ALERT: Remote root login via SSH is allowed")
 
+            # Case 2: PasswordAuthentication yes --> allow ssh using password
+            x = re.search("\n[^\#]*passwordauthentication\s+yes", contents)
+            if x:
+                result = False
+                print("ALERT: Password is allowed to Remote login via SSH")
+        return result
 
-    return result
-
-# Function 2: Check the passphrase of private key: trong trường hợp có lấy được private key thì cũng không thể kết nối được
+# Function 3: Check the passphrase of private key: trong trường hợp có lấy được private key thì cũng không thể kết nối được
     # Ktra những file trong .ssh, có PRIVATE --> Check the passphrase
-#  ssh-keygen -y -f ~/.ssh/name_of_key  --> nếu hiện ra public_key --> không có passphrase, ngược lại nếu hỏi "Enter..." --> có passphrase
 def find_ssh_private_keys_noPassphrase(home_dirs):
-    # result = True: not exist any anonmyous activities
     result = True
     for dir in home_dirs:
         # Check if the .ssh directory exists
@@ -102,40 +109,37 @@ def find_ssh_private_keys_noPassphrase(home_dirs):
                                 print(f"ALERT: No Passphrase using for private key in {file_path}")
     if (result):
         print("Do not find any private keys without Passphrase") 
+    return result
 
 
-# Function 3: Check duplicated key in authorized_keys file
+# Function 4: Check duplicated key in authorized_keys file
 def find_ssh_authorized_keys_duplicates(home_dirs):
+    result = True
     for dir in home_dirs:
-        # result = True: not exist any anonmyous activities
-        result = True
         authorized_keys_path = os.path.join(dir, '.ssh', 'authorized_keys')
-
         if os.path.isfile(authorized_keys_path):
             print(f"Processing {authorized_keys_path}.")
-
             # Read the authorized_keys file and count duplicates (read line)
             keys = defaultdict(int)
             with open(authorized_keys_path, 'r') as auth_keys_file:
                 for line in auth_keys_file:
                     if (line.strip() != ""):
                         keys[line] += 1
-
             # Print duplicate keys and their counts
             for key, count in keys.items():
                 if count > 1:
                     result = False
                     print(f"ALERT: {key.strip()} is duplicated {count} times")
+
     if (result):
         print("No anonymous activities here!")
     return result
 
 
-# Function 4: Check excessive key in authorized_keys file (10 keys here)
+# Function 5: Check excessive key in authorized_keys file (10 keys here)
 def find_ssh_authorized_keys_excessive(home_dirs, number_of_keys):
     # result = True: not exist any anonmyous activities
     result = True
-
     MAX_KEY = number_of_keys
     
     for dir in home_dirs:
@@ -161,7 +165,7 @@ def find_ssh_authorized_keys_excessive(home_dirs, number_of_keys):
         print("No anonymous activities here!")
     return result
 
-# Function 5: Check for option set in authorized_keys file
+# Function 6: Check for option set in authorized_keys file
 def find_ssh_authorized_keys_options_search(home_dirs):
     # result = True: not exist any anonmyous activities
     result = True
@@ -187,13 +191,13 @@ def find_ssh_authorized_keys_options_search(home_dirs):
     return result
 
 
-# Function 6: Check for the modification of authorized_keys file in a limited time (24h here)
-def find_ssh_authorized_keys_modified_24hrs(home_dirs):
+# Function 7: Check for the modification of authorized_keys file in a limited time (24h here)
+def find_ssh_authorized_keys_modified(home_dirs, time_check):
     # result = True: not exist any anonmyous activities
     result = True
 
     # 24 hours in seconds. Adjust to suit.
-    SECONDS_LIMIT = 86400  # 24 hours in seconds
+    SECONDS_LIMIT = time_check * 3600  # 24 hours in seconds
     now = int(time.time())
 
     for dir in home_dirs:
@@ -208,7 +212,7 @@ def find_ssh_authorized_keys_modified_24hrs(home_dirs):
             # If the file was modified in the last 24 hours (86400 seconds)
             if diff <= SECONDS_LIMIT:
                 result = False
-                print(f"User with home directory {dir} has modified their authorized_keys file in the last 24 hours.")
+                print(f"User with home directory {dir} has modified their authorized_keys file in the last {time_check} hours.")
     
     if (result):
         print("No anonymous activities here!")
@@ -222,50 +226,46 @@ if __name__ == '__main__':
 
     # Get list of all home directories from /etc/passwd
     home_dirs = list_home_dirs()
-
-
-    # # Function : Check find_ssh_private_keys
-    # print("Check for find_ssh_private_keys: ")
-    # result1 = find_ssh_private_keys(home_dirs)
-    # print("-----------------------------------------------------------")
     
-    # Function : Find ssh_authorized_keys2
+    # Function 1 : Find ssh_authorized_keys2
     print("Find ssh_authorized_keys2: ")
-    result2 = find_ssh_authorized_keys2_search(home_dirs)
+    result1 = find_ssh_authorized_keys2_search(home_dirs)
     print("-----------------------------------------------------------")
 
+    # Function 2: Check /etc/ssh/sshd_config file
+    print("Check /etc/ssh/sshd_config file")
+    result2 = check_ssh_config()
+    print("-----------------------------------------------------------")
 
-
-
-
-    # Function2 : Check find_ssh_private_keys
+    # Function 3: Check find_ssh_private_keys_passPhrase
     print("Check for find_ssh_private_keys: ")
-    result1 = find_ssh_private_keys_noPassphrase(home_dirs)
+    result3 = find_ssh_private_keys_noPassphrase(home_dirs)
     print("-----------------------------------------------------------")
 
 
-    # Function 3: Check duplicated key in authorized_keys file
+    # Function 4: Check duplicated key in authorized_keys file
     print("Check duplicated key in authorized_keys file: ")
-    result3 = find_ssh_authorized_keys_duplicates(home_dirs)
+    result4 = find_ssh_authorized_keys_duplicates(home_dirs)
     print("-----------------------------------------------------------")
 
-    # Function 4: Check excessive key in authorized_keys file (10 keys here)
+    # Function 5: Check excessive key in authorized_keys file (10 keys here)
     print("Check excessive key in authorized_keys file")
     x = 10
-    result4 = find_ssh_authorized_keys_excessive(home_dirs, x)
+    result5 = find_ssh_authorized_keys_excessive(home_dirs, x)
     print("-----------------------------------------------------------")
 
-    # Function 5: Check for option set in authorized_keys file
+    # Function 6: Check for option set in authorized_keys file
     print("Check for option set in authorized_keys file")
-    result5 = find_ssh_authorized_keys_options_search(home_dirs)
+    result6 = find_ssh_authorized_keys_options_search(home_dirs)
     print("-----------------------------------------------------------")
 
-    # Function 6: Check for the modification of authorized_keys file in a limited time (24h here)
+    # Function 7: Check for the modification of authorized_keys file in a limited time (24h here)
     print("ALERT: Check for the modification of authorized_keys file in a limited time (24h here)")
-    result6 = find_ssh_authorized_keys_modified_24hrs(home_dirs)
+    result7 = find_ssh_authorized_keys_modified(home_dirs,24)
     print("-----------------------------------------------------------")
-    
-    if (result1 & result2 & result3 & result4 & result5 & result6):
+
+
+    if (result1 & result2 & result3 & result4 & result5 & result6 & result7):
         print("Check SSH done: No anonymous activities!")
     else:
         print("Check SSH done: Find some anonymous activities above")
