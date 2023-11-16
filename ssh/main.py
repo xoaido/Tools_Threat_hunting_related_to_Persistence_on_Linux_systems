@@ -3,7 +3,7 @@ import sys
 import time
 import re
 from collections import defaultdict 
-import time
+import subprocess
 
 # This script needs to be run as root to be able to read all user's .ssh directories
 def check_root():
@@ -17,8 +17,68 @@ def list_home_dirs():
         home_dirs = [line.split(':')[5] for line in passwd_file]
     return home_dirs
 
-# Function 1: Find_ssh_private_keys
-def find_ssh_private_keys(home_dirs):
+'''
+Function cũ: không sử dụng
+
+# Function 1 : Find_ssh_private_keys
+# def find_ssh_private_keys(home_dirs):
+#     # result = True: not exist any anonmyous activities
+#     result = True
+#     for dir in home_dirs:
+#         # Check if the .ssh directory exists
+#         ssh_dir = os.path.join(dir, ".ssh")
+#         if os.path.exists(ssh_dir) and os.path.isdir(ssh_dir):
+#             # Find all files in the .ssh directory that contain the word "PRIVATE"
+#             private_files = []
+        
+#             for root, _, files in os.walk(ssh_dir):
+#                 for filename in files:
+#                     file_path = os.path.join(root, filename)
+#                     with open(file_path, "r") as file:
+#                         contents = file.read()
+#                         if "PRIVATE" in contents:
+#                             private_files.append(file_path)
+
+#             if private_files:
+#                 result = False
+#                 print(f"ALERT: User with home directory {dir} has files in their .ssh directory that are likely private keys:")
+#                 for file in private_files:
+#                     print(file)
+#     if (result):
+#         print("No anonymous activities here!")
+#     return result
+'''
+# Function : Find authorized_key2
+def find_ssh_authorized_keys2_search(home_dirs):
+    # result = True: not exist any anonmyous activities
+    result = True
+    for dir in home_dirs:
+        authorized_keys2_path = os.path.join(dir, '.ssh', 'authorized_keys2')
+        if os.path.isfile(authorized_keys2_path):
+            result = False
+            print(f'ALERT: An authorized_keys2 file was found at: {authorized_keys2_path}.')
+    
+    if (result):
+        print("No anonymous activities here!")
+    return result
+
+
+
+# Function 1: Check /etc/ssh/sshd_config option, PasswordAuthentication no/yes
+
+def check_ssh_config():
+    result = True
+    
+    file_path = "/etc/ssh/sshd_config"
+    
+
+
+    return result
+
+# Function 2: Check the passphrase of private key: trong trường hợp có lấy được private key thì cũng không thể kết nối được
+    # Ktra những file trong .ssh, có PRIVATE --> Check the passphrase
+#  ssh-keygen -y -f ~/.ssh/name_of_key  --> nếu hiện ra public_key --> không có passphrase, ngược lại nếu hỏi "Enter..." --> có passphrase
+def find_ssh_private_keys_noPassphrase(home_dirs):
     # result = True: not exist any anonmyous activities
     result = True
     for dir in home_dirs:
@@ -34,31 +94,14 @@ def find_ssh_private_keys(home_dirs):
                     with open(file_path, "r") as file:
                         contents = file.read()
                         if "PRIVATE" in contents:
-                            private_files.append(file_path)
-
-            if private_files:
-                result = False
-                print(f"ALERT: User with home directory {dir} has files in their .ssh directory that are likely private keys:")
-                for file in private_files:
-                    print(file)
+                            command = ["sudo","ssh-keygen","-yf", file_path]
+                            p = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            output = p.communicate()[0]
+                            if output != '':
+                                result = False
+                                print(f"ALERT: No Passphrase using for private key in {file_path}")
     if (result):
-        print("No anonymous activities here!")
-    return result
-
-
-# Function 2: Find authorized_key2
-def find_ssh_authorized_keys2_search(home_dirs):
-    # result = True: not exist any anonmyous activities
-    result = True
-    for dir in home_dirs:
-        authorized_keys2_path = os.path.join(dir, '.ssh', 'authorized_keys2')
-        if os.path.isfile(authorized_keys2_path):
-            result = False
-            print(f'ALERT: An authorized_keys2 file was found at: {authorized_keys2_path}.')
-    
-    if (result):
-        print("No anonymous activities here!")
-    return result
+        print("Do not find any private keys without Passphrase") 
 
 
 # Function 3: Check duplicated key in authorized_keys file
@@ -89,11 +132,11 @@ def find_ssh_authorized_keys_duplicates(home_dirs):
 
 
 # Function 4: Check excessive key in authorized_keys file (10 keys here)
-def find_ssh_authorized_keys_excessive(home_dirs):
+def find_ssh_authorized_keys_excessive(home_dirs, number_of_keys):
     # result = True: not exist any anonmyous activities
     result = True
 
-    MAX_KEY = 10
+    MAX_KEY = number_of_keys
     
     for dir in home_dirs:
         authorized_keys_path = os.path.join(dir, '.ssh', 'authorized_keys')
@@ -181,15 +224,25 @@ if __name__ == '__main__':
     home_dirs = list_home_dirs()
 
 
-    # Function 1: Check find_ssh_private_keys
-    print("Check for find_ssh_private_keys: ")
-    result1 = find_ssh_private_keys(home_dirs)
-    print("-----------------------------------------------------------")
+    # # Function : Check find_ssh_private_keys
+    # print("Check for find_ssh_private_keys: ")
+    # result1 = find_ssh_private_keys(home_dirs)
+    # print("-----------------------------------------------------------")
     
-    # Function 2: Find ssh_authorized_keys2
+    # Function : Find ssh_authorized_keys2
     print("Find ssh_authorized_keys2: ")
     result2 = find_ssh_authorized_keys2_search(home_dirs)
     print("-----------------------------------------------------------")
+
+
+
+
+
+    # Function2 : Check find_ssh_private_keys
+    print("Check for find_ssh_private_keys: ")
+    result1 = find_ssh_private_keys_noPassphrase(home_dirs)
+    print("-----------------------------------------------------------")
+
 
     # Function 3: Check duplicated key in authorized_keys file
     print("Check duplicated key in authorized_keys file: ")
@@ -197,8 +250,9 @@ if __name__ == '__main__':
     print("-----------------------------------------------------------")
 
     # Function 4: Check excessive key in authorized_keys file (10 keys here)
-    print("Check excessive key in authorized_keys file (10 keys here)")
-    result4 = find_ssh_authorized_keys_excessive(home_dirs)
+    print("Check excessive key in authorized_keys file")
+    x = 10
+    result4 = find_ssh_authorized_keys_excessive(home_dirs, x)
     print("-----------------------------------------------------------")
 
     # Function 5: Check for option set in authorized_keys file
