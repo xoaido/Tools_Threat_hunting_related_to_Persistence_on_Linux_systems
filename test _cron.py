@@ -220,7 +220,9 @@ def sshScanner(keys, hours):
 
 
 
-
+def get_username_from_path(path):
+    # Hàm này nhận đường dẫn và trả về tên người dùng từ đường dẫn
+    return os.path.basename(path)
 
 def crontabScanner():
     print("\n[*]----------------------[[ CronTab Scan ]]----------------------[*]")
@@ -245,11 +247,11 @@ def crontabScanner():
 
     # Tạo từ điển để lưu trữ các danh sách tương ứng và thông báo
     matched_lines = {
-        "is_long": {"message": "Very long strings, which may indicate encoding:", "lines": []},
-        "is_malicious": {"message": "Malicious code often exists in this directory:", "lines": []},
-        "is_common_command": {"message": "These are commonly used commands to connect to the internet:", "lines": []},
-        "is_encoded": {"message": "Insert and encode commands:", "lines": []},
-        "is_shell_related": {"message": "Used to run a shell on the system", "lines": []}
+        "is_long": {"message": "Very long strings, which may indicate encoding:", "entries": []},
+        "is_malicious": {"message": "Malicious code often exists in this directory:", "entries": []},
+        "is_common_command": {"message": "These are commonly used commands to connect to the internet:", "entries": []},
+        "is_encoded": {"message": "Insert and encode commands:", "entries": []},
+        "is_shell_related": {"message": "Used to run a shell on the system", "entries": []}
     }
 
     for cron_path in cron_paths:
@@ -285,21 +287,9 @@ def crontabScanner():
                 if re.search(r'(\|*sh|\*sh -c)', line):
                     is_shell_related = True
 
-                # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm dòng vào danh sách tương ứng
-                if is_long:
-                    matched_lines["is_long"]["lines"].append(line)
-                    is_abnormal_schedule = True
-                if is_malicious:
-                    matched_lines["is_malicious"]["lines"].append(line)
-                    is_abnormal_schedule = True
-                if is_common_command:
-                    matched_lines["is_common_command"]["lines"].append(line)
-                    is_abnormal_schedule = True
-                if is_encoded:
-                    matched_lines["is_encoded"]["lines"].append(line)
-                    is_abnormal_schedule = True
-                if is_shell_related:
-                    matched_lines["is_shell_related"]["lines"].append(line)
+                # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm entry vào danh sách tương ứng
+                if is_long or is_malicious or is_common_command or is_encoded or is_shell_related:
+                    matched_lines["is_long"]["entries"].append({"line": line, "user": get_username_from_path(cron_path)})
                     is_abnormal_schedule = True
 
         except FileNotFoundError:
@@ -307,10 +297,11 @@ def crontabScanner():
 
     # In tất cả các danh sách tương ứng
     for key, value in matched_lines.items():
-        if value["lines"]:
+        if value["entries"]:
             print(f"{value['message']}")
-            for line in value["lines"]:
-                print(line)
+            for entry in value["entries"]:
+                print(f"User: {entry['user']}")
+                print(f"Line: {entry['line']}")
                 print("--------------------------------------------------------------")
             print()
     
@@ -320,7 +311,7 @@ def crontabScanner():
     else:
         print("======>Crontab does not have threat")
 
-
+# Gọi hàm crontabScanner để thực
 
 
 
