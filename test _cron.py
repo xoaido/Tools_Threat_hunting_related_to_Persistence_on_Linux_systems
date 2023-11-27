@@ -222,10 +222,6 @@ def sshScanner(keys, hours):
 
 
 
-def get_username_from_path(path):
-    # Hàm này nhận đường dẫn và trả về tên người dùng từ đường dẫn
-    return os.path.basename(path)
-
 def crontabScanner():
     print("\n[*]----------------------[[ CronTab Scan ]]----------------------[*]")
     
@@ -290,8 +286,20 @@ def crontabScanner():
                     is_shell_related = True
 
                 # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm dòng vào danh sách tương ứng
-                if is_long or is_malicious or is_common_command or is_encoded or is_shell_related:
-                    matched_lines["is_long"]["lines"].append({"line": line, "user": get_username_from_path(cron_path)})
+                if is_long:
+                    matched_lines["is_long"]["lines"].append(line)
+                    is_abnormal_schedule = True
+                if is_malicious:
+                    matched_lines["is_malicious"]["lines"].append(line)
+                    is_abnormal_schedule = True
+                if is_common_command:
+                    matched_lines["is_common_command"]["lines"].append(line)
+                    is_abnormal_schedule = True
+                if is_encoded:
+                    matched_lines["is_encoded"]["lines"].append(line)
+                    is_abnormal_schedule = True
+                if is_shell_related:
+                    matched_lines["is_shell_related"]["lines"].append(line)
                     is_abnormal_schedule = True
 
         except FileNotFoundError:
@@ -301,9 +309,8 @@ def crontabScanner():
     for key, value in matched_lines.items():
         if value["lines"]:
             print(f"{value['message']}")
-            for entry in value["lines"]:
-                print(f"User: {entry['user']}")
-                print(f"Line: {entry['line']}")
+            for line in value["lines"]:
+                print(line)
                 print("--------------------------------------------------------------")
             print()
     
@@ -312,7 +319,6 @@ def crontabScanner():
         print("======>Crontab does have threat")
     else:
         print("======>Crontab does not have threat")
-
 
 
 
