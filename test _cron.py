@@ -220,6 +220,8 @@ def sshScanner(keys, hours):
 
 
 
+
+
 def get_username_from_path(path):
     # Hàm này nhận đường dẫn và trả về tên người dùng từ đường dẫn
     return os.path.basename(path)
@@ -310,6 +312,7 @@ def crontabScanner():
         print("======>Crontab does have threat")
     else:
         print("======>Crontab does not have threat")
+
 
 
 
