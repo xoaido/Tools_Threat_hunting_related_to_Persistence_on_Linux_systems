@@ -270,6 +270,10 @@ def crontabScanner():
                 is_encoded = False
                 is_shell_related = False
                 
+                # Kiểm tra nếu dòng lập lịch chứa cấu hình SHELL=/bin/sh
+                if "SHELL=/bin/sh" in line:
+                    continue  # Bỏ qua dòng cấu hình chung về SHELL
+
                 # Kiểm tra độ dài dòng lập lịch
                 if len(line) > 200:
                     is_long = True
