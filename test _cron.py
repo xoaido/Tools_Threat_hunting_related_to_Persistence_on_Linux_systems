@@ -263,6 +263,7 @@ def crontabScanner():
                 crontab_output = file.read()
                 
             lines = crontab_output.split('\n')
+            shell_count = 0  # Số lần xuất hiện của SHELL=/bin/sh
 
             for line in lines:
                 # Kiểm tra nếu dòng lập lịch chứa cấu hình SHELL=/bin/sh
@@ -277,7 +278,7 @@ def crontabScanner():
                         break  # Dừng việc kiểm tra các dòng tiếp theo
 
                     continue  # Bỏ qua dòng cấu hình chung về SHELL
-                
+
                 is_common_command = False
                 is_long = False
                 is_encoded = False
