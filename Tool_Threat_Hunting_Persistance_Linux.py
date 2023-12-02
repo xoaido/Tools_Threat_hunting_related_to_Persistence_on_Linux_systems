@@ -218,84 +218,127 @@ def sshScanner(keys, hours):
     else:
         print("\n==> Check SSH done: Find some anonymous activities above")    
 
+#--------------------------Cron----------------------------------------------
+def get_username_from_path(path):
+    # This function takes a path and returns the username from the path
+    return os.path.basename(path)
+
+def print_user_header(username):
+    print(f"\n[*]----------------------[[ User: {username} ]]----------------------[*]")
+
+def print_category_header(category_message):
+    print(f"\n======> {category_message}")
+
+def print_cron_line(line):
+    print(f"Cron: {line}")
+    print("--------------------------------------------------------------")
+
 def crontabScanner():
-    print("\n[*]----------------------[[ CronTab Scan ]]----------------------[*]")
-    # Chạy lệnh crontab -l để lấy nội dung crontab hiện tại
-    try:
-        crontab_output = subprocess.check_output(["crontab", "-l"], stderr=subprocess.STDOUT, text=True)
-        # print("Nội dung crontab:")
-        # print(crontab_output)
-        # Tìm các dòng lập lịch chứa các ký tự đặc biệt hoặc chuỗi cụ thể
-        lines = crontab_output.split('\n')
-        
-        # Tạo từ điển để lưu trữ các danh sách tương ứng và thông báo
-        matched_lines = {
-            "is_long": {"message": "Very long strings, which may indicate encoding:", "lines": []},
-            "is_malicious": {"message": "Malicious code often exists in this directory:", "lines": []},
-            "is_common_command": {"message": "These are commonly used commands to connect to the internet:", "lines": []},
-            "is_encoded": {"message": "Insert and encode commands:", "lines": []},
-            "is_shell_related": {"message": "Used to run a shell on the system", "lines": []}
-        }
-         # Biến để kiểm tra xem có lập lịch bất thường hay không
-        is_abnormal_schedule = False
+    print("\n[*]----------------------[[T1053.003 Execution and Persistence via Cronjob ]]----------------------[*]")
+    print("\n[*]--------------------------------------[[ CronTab Scan ]]----------------------[*]")
+    
+    # Check for root privileges
+    if os.geteuid() != 0:
+        print("This script requires root privileges. Please run it with sudo or as root.")
+        return
 
-        for line in lines:
-            is_malicious = False
-            is_common_command = False
-            is_long = False
-            is_encoded = False
-            is_shell_related = False
-            # Kiểm tra độ dài dòng lập lịch
-            if len(line) > 200:
-                is_long = True
+    # List of paths containing cron files
+    cron_paths = ["/etc/crontab"]
+    
+    user_cron_dir = "/var/spool/cron/crontabs"
+    # Get a list of all users in the /var/spool/cron/crontabs directory
+    users = [f for f in os.listdir(user_cron_dir) if os.path.isfile(os.path.join(user_cron_dir, f))]
+    
+    # Add cron paths for each user to the list
+    cron_paths.extend([os.path.join(user_cron_dir, user) for user in users])
 
-            # Kiểm tra nếu dòng lập lịch chứa "/tmp"
-            if "/tmp" in line:
-                is_malicious = True
+    # Variable to check if there is any abnormal scheduling
+    is_abnormal_schedule = False
 
-            # Kiểm tra nếu dòng lập lịch chứa các lệnh "curl", "@", "dig", "http?://*", "nc", "wget"
-            if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
-                is_common_command = True
+    for cron_path in cron_paths:
+        try:
+            username = get_username_from_path(cron_path)
+            print_user_header(username)
 
-            # Kiểm tra nếu dòng lập lịch chứa ký tự mã hóa như "^M" hoặc "base64"
-            if re.search(r'(\^M|base64)', line):
-                is_encoded = True
+            with open(cron_path, 'r') as file:
+                crontab_output = file.read()
+                
+            lines = crontab_output.split('\n')
+            shell_count = 0  # Count of occurrences of SHELL=/bin/sh
 
-            if re.search(r'(\|*sh|\*sh -c)', line):
-                is_shell_related = True
+            for line in lines:
+                # Skip lines starting with "#"
+                if line.startswith("#"):
+                    continue
 
-            # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm dòng vào danh sách tương ứng
-            if is_long:
-                matched_lines["is_long"]["lines"].append(line)
-                is_abnormal_schedule = True
-            if is_malicious:
-                matched_lines["is_malicious"]["lines"].append(line)
-                is_abnormal_schedule = True
-            if is_common_command:
-                matched_lines["is_common_command"]["lines"].append(line)
-                is_abnormal_schedule = True
-            if is_encoded:
-                matched_lines["is_encoded"]["lines"].append(line)
-                is_abnormal_schedule = True
-            if is_shell_related:
-                matched_lines["is_shell_related"]["lines"].append(line)
-                is_abnormal_schedule = True
+                # Check if the cron line contains the configuration SHELL=/bin/sh
+                if "SHELL=/bin/sh" in line:
+                    shell_count += 1
 
-        # In tất cả các danh sách tương ứng
-        for key, value in matched_lines.items():
-            if value["lines"]:
-                print(f"{value['message']}")
-                for line in value["lines"]:
-                    print(line)
-                    print("--------------------------------------------------------------")
-                print()
-        # Kiểm tra và thông báo nếu không có lập lịch bất thường
-        if is_abnormal_schedule:
-            print("======>Crontab does have threat")
-        else:
-            print("======>Crontab does not have threat")
-    except subprocess.CalledProcessError as e:
-        print(f"Lỗi: {e.returncode}\n{e.output}")
+                    # If it appears a second time, issue a warning
+                    if shell_count > 1:
+                        print_category_header("Multiple SHELL=/bin/sh configurations:")
+                        print(f"Number of SHELL=/bin/sh lines: {shell_count}")
+                        is_abnormal_schedule = True
+                        continue # Continue checking the next lines
+
+                    continue  # Skip the common SHELL configuration line
+                is_malicious = False
+                is_common_command = False
+                is_long = False
+                is_encoded = False
+                is_shell_related = False
+                
+                # Check if the cron line contains "/tmp"
+                if "/tmp" in line:
+                    is_malicious = True
+
+                # Check the length of the cron line
+                if len(line) > 200:
+                    is_long = True
+
+                # Check if the cron line contains common commands like "curl", "@", "dig", "http?://*", "nc", "wget"
+                if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
+                    is_common_command = True
+
+                # Check if the cron line contains encoding characters like "^M" or "base64"
+                if re.search(r'(\^M|base64)', line):
+                    is_encoded = True
+
+                if re.search(r'(\|*sh|\*sh -c)', line):
+                    is_shell_related = True
+
+                # If any indicators are identified, print information for each type
+                if is_long:
+                    print_category_header("Very long strings, which may indicate encoding:")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+                if is_malicious:
+                    print_category_header("Malicious code often exists in this directory:")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+                if is_common_command:
+                    print_category_header("These are commonly used commands to connect to the internet:")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+                if is_encoded:
+                    print_category_header("Insert and encode commands:")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+                if is_shell_related:
+                    print_category_header("Used to run a shell on the system")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+
+        except FileNotFoundError:
+            print(f"File not found: {cron_path}")
+
+    # Check and report if there is no abnormal scheduling
+    if is_abnormal_schedule:
+        print("======>Crontab does have threat")
+    else:
+        print("======>Crontab does not have threat")
+
 
 
 
