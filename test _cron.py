@@ -270,7 +270,7 @@ def crontabScanner():
                 if "SHELL=/bin/sh" in line:
                     shell_count += 1
 
-                # Nếu xuất hiện lần thứ hai, cảnh báo
+                    # Nếu xuất hiện lần thứ hai, cảnh báo
                     if shell_count > 1:
                         print_category_header("Multiple SHELL=/bin/sh configurations:")
                         print(f"Number of SHELL=/bin/sh lines: {shell_count}")
