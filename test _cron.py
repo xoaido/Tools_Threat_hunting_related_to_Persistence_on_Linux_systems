@@ -266,6 +266,10 @@ def crontabScanner():
             shell_count = 0  # Số lần xuất hiện của SHELL=/bin/sh
 
             for line in lines:
+                # Bỏ qua những dòng bắt đầu bằng "#"
+                if line.startswith("#"):
+                    continue
+
                 # Kiểm tra nếu dòng lập lịch chứa cấu hình SHELL=/bin/sh
                 if "SHELL=/bin/sh" in line:
                     shell_count += 1
