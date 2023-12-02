@@ -275,7 +275,7 @@ def crontabScanner():
                         print_category_header("Multiple SHELL=/bin/sh configurations:")
                         print(f"Number of SHELL=/bin/sh lines: {shell_count}")
                         is_abnormal_schedule = True
-                        break  # Dừng việc kiểm tra các dòng tiếp theo
+                        continue # Tiếp tục kiểm tra các dòng tiếp theo
 
                     continue  # Bỏ qua dòng cấu hình chung về SHELL
 
