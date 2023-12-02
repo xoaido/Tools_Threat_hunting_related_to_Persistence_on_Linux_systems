@@ -278,15 +278,15 @@ def crontabScanner():
                         continue # Tiếp tục kiểm tra các dòng tiếp theo
 
                     continue  # Bỏ qua dòng cấu hình chung về SHELL
-
+                is_malicious = False
                 is_common_command = False
                 is_long = False
                 is_encoded = False
                 is_shell_related = False
                 
-                # Kiểm tra nếu dòng lập lịch chứa cấu hình SHELL=/bin/sh
-                if "SHELL=/bin/sh" in line:
-                    continue  # Bỏ qua dòng cấu hình chung về SHELL
+                # Kiểm tra nếu dòng lập lịch chứa "/tmp"
+                if "/tmp" in line:
+                    is_malicious = True
 
                 # Kiểm tra độ dài dòng lập lịch
                 if len(line) > 200:
@@ -306,6 +306,10 @@ def crontabScanner():
                 # Nếu có bất kỳ dấu hiệu nào được nhận diện, in thông tin theo từng loại
                 if is_long:
                     print_category_header("Very long strings, which may indicate encoding:")
+                    print_cron_line(line)
+                    is_abnormal_schedule = True
+                if is_malicious:
+                    print_category_header("Malicious code often exists in this directory:")
                     print_cron_line(line)
                     is_abnormal_schedule = True
                 if is_common_command:
