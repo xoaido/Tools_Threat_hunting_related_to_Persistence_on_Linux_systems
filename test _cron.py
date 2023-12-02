@@ -219,102 +219,6 @@ def sshScanner(keys, hours):
         print("\n==> Check SSH done: Find some anonymous activities above")    
 
 
-
-# def get_username_from_path(path):
-#     # Hàm này nhận đường dẫn và trả về tên người dùng từ đường dẫn
-#     return os.path.basename(path)
-
-# def crontabScanner():
-#     print("\n[*]----------------------[[ CronTab Scan ]]----------------------[*]")
-    
-#     # Kiểm tra quyền root
-#     if os.geteuid() != 0:
-#         print("This script requires root privileges. Please run it with sudo or as root.")
-#         return
-
-#     # Danh sách các đường dẫn chứa file cron
-#     cron_paths = ["/etc/crontab"]
-    
-#     user_cron_dir = "/var/spool/cron/crontabs"
-#     # Lấy danh sách tất cả các user trong thư mục /var/spool/cron/crontabs
-#     users = [f for f in os.listdir(user_cron_dir) if os.path.isfile(os.path.join(user_cron_dir, f))]
-    
-#     # Thêm các đường dẫn cron của từng user vào danh sách
-#     cron_paths.extend([os.path.join(user_cron_dir, user) for user in users])
-
-#     # Biến để kiểm tra xem có lập lịch bất thường hay không
-#     is_abnormal_schedule = False
-
-#     # Tạo từ điển để lưu trữ các danh sách tương ứng và thông báo
-#     matched_lines = {
-#         "is_long": {"message": "Very long strings, which may indicate encoding:", "entries": []},
-#         "is_malicious": {"message": "Malicious code often exists in this directory:", "entries": []},
-#         "is_common_command": {"message": "These are commonly used commands to connect to the internet:", "entries": []},
-#         "is_encoded": {"message": "Insert and encode commands:", "entries": []},
-#         "is_shell_related": {"message": "Used to run a shell on the system", "entries": []}
-#     }
-
-#     for cron_path in cron_paths:
-#         try:
-#             with open(cron_path, 'r') as file:
-#                 crontab_output = file.read()
-                
-#             lines = crontab_output.split('\n')
-
-#             for line in lines:
-#                 is_malicious = False
-#                 is_common_command = False
-#                 is_long = False
-#                 is_encoded = False
-#                 is_shell_related = False
-                
-#                 # Kiểm tra độ dài dòng lập lịch
-#                 if len(line) > 200:
-#                     is_long = True
-
-#                 # Kiểm tra nếu dòng lập lịch chứa "/tmp"
-#                 if "/tmp" in line:
-#                     is_malicious = True
-
-#                 # Kiểm tra nếu dòng lập lịch chứa các lệnh "curl", "@", "dig", "http?://*", "nc", "wget"
-#                 if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
-#                     is_common_command = True
-
-#                 # Kiểm tra nếu dòng lập lịch chứa ký tự mã hóa như "^M" hoặc "base64"
-#                 if re.search(r'(\^M|base64)', line):
-#                     is_encoded = True
-
-#                 if re.search(r'(\|*sh|\*sh -c)', line):
-#                     is_shell_related = True
-
-#                 # Nếu có bất kỳ dấu hiệu nào được nhận diện, thêm entry vào danh sách tương ứng
-#                 if is_long or is_malicious or is_common_command or is_encoded or is_shell_related:
-#                     matched_lines["is_long"]["entries"].append({"line": line, "user": get_username_from_path(cron_path)})
-#                     is_abnormal_schedule = True
-
-#         except FileNotFoundError:
-#             print(f"File not found: {cron_path}")
-
-#     # In tất cả các danh sách tương ứng
-#     for key, value in matched_lines.items():
-#         if value["entries"]:
-#             print(f"{value['message']}")
-#             for entry in value["entries"]:
-#                 print(f"User: {entry['user']}")
-#                 print(f"Line: {entry['line']}")
-#                 print("--------------------------------------------------------------")
-#             print()
-    
-#     # Kiểm tra và thông báo nếu không có lập lịch bất thường
-#     if is_abnormal_schedule:
-#         print("======>Crontab does have threat")
-#     else:
-#         print("======>Crontab does not have threat")
-
-# # Gọi hàm crontabScanner để thực
-
-
-
 def get_username_from_path(path):
     # Hàm này nhận đường dẫn và trả về tên người dùng từ đường dẫn
     return os.path.basename(path)
@@ -361,7 +265,6 @@ def crontabScanner():
             lines = crontab_output.split('\n')
 
             for line in lines:
-                is_malicious = False
                 is_common_command = False
                 is_long = False
                 is_encoded = False
@@ -370,10 +273,6 @@ def crontabScanner():
                 # Kiểm tra độ dài dòng lập lịch
                 if len(line) > 200:
                     is_long = True
-
-                # Kiểm tra nếu dòng lập lịch chứa "/tmp"
-                if "/tmp" in line:
-                    is_malicious = True
 
                 # Kiểm tra nếu dòng lập lịch chứa các lệnh "curl", "@", "dig", "http?://*", "nc", "wget"
                 if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
@@ -389,10 +288,6 @@ def crontabScanner():
                 # Nếu có bất kỳ dấu hiệu nào được nhận diện, in thông tin theo từng loại
                 if is_long:
                     print_category_header("Very long strings, which may indicate encoding:")
-                    print_cron_line(line)
-                    is_abnormal_schedule = True
-                if is_malicious:
-                    print_category_header("Malicious code often exists in this directory:")
                     print_cron_line(line)
                     is_abnormal_schedule = True
                 if is_common_command:
