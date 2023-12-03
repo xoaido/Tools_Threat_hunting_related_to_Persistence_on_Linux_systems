@@ -37,7 +37,7 @@ suspicious_command_patterns = [
     r"sudoers\s+.*",
     r"visudo\s+.*",
     r"crontab\s+.*",
-    r"at\s+.*",
+    #r"at\s+.*",
     r"systemctl\s+.*",
     r"journalctl\s+.*",
     r"service\s+.*",
