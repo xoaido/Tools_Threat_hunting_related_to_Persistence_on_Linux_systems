@@ -260,7 +260,7 @@ if __name__ == '__main__':
     print("-----------------------------------------------------------")
 
     # Function 7: Check for the modification of authorized_keys file in a limited time (24h here)
-    print("ALERT: Check for the modification of authorized_keys file in a limited time (24h here)")
+    print("Check for the modification of authorized_keys file in a limited time (24h here)")
     result7 = find_ssh_authorized_keys_modified(home_dirs,24)
     print("-----------------------------------------------------------")
 
