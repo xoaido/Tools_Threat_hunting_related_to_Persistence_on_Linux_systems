@@ -11,6 +11,6 @@ Search for very long strings, which may indicate encoding.
 
 
 Rootkit Example (For Educational Purpose Only):
-https://github.com/MatthiasCr/LKM-Rootkit
-https://github.com/m0nad/Diamorphine
-https://github.com/f0rb1dd3n/Reptile
+https://github.com/MatthiasCr/LKM-Rootkit<br>
+https://github.com/m0nad/Diamorphine<br>
+https://github.com/f0rb1dd3n/Reptile<br>
