@@ -1,3 +1,5 @@
+#Kiểm tra xem các directory chứa module có quyền write cho Group hoặc Other không
+
 import subprocess
 import re
 
