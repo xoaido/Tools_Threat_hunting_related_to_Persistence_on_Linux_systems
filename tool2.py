@@ -24,19 +24,13 @@ for module_name in module_names:
             # Sử dụng lệnh ls -ld để lấy thông tin về quyền của thư mục
             ls_output = subprocess.check_output(f"ls -ld {module_directory}", shell=True, text=True)
 
-            # Sử dụng biểu thức chính quy mới để trích xuất tên Owner và Group từ kết quả ls
-            owner_group_match = re.search(r'\s(\w+)\s(\w+)\s\d+ \w+ \d+:\d+.*$', ls_output)
-            if owner_group_match:
-                owner = owner_group_match.group(1)
-                group = owner_group_match.group(2)
-                
-                # Kiểm tra xem Owner hoặc Group có giá trị "root" hay không
-                if owner != "root" and group != "root":
-                    # Nếu không phải "root", thì in thông tin
-                    print(f"Module: {module_name}")
-                    print(f"Module Directory: {module_directory}")
-                    print(f"Directory Permissions: {ls_output.split()[0]}")
-                    print("=" * 80)  # Dấu phân cách giữa các module
+            # Kiểm tra xem Group và Other có quyền Write hay không
+            if "w" in ls_output[5] or "w" in ls_output[8]:
+                # Nếu không có quyền Write, thì in thông tin
+                print(f"Module: {module_name}")
+                print(f"Module Directory: {module_directory}")
+                print(f"Directory Permissions: {ls_output.split()[0]}")
+                print("=" * 80)  # Dấu phân cách giữa các module
         else:
             print(f"Không thể tìm thấy filename cho module {module_name}")
     except subprocess.CalledProcessError as e:
