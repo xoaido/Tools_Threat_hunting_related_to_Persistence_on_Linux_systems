@@ -10,7 +10,7 @@ Insert and encode commands(base64, ^M^M)
 Search for very long strings, which may indicate encoding. 
 
 
-Rootkit Example (For Educational Purpose Only):
+Rootkit Example (For Educational Purpose Only):<br>
 https://github.com/MatthiasCr/LKM-Rootkit<br>
 https://github.com/m0nad/Diamorphine<br>
 https://github.com/f0rb1dd3n/Reptile<br>
