@@ -1,3 +1,4 @@
+#Kiểm tra các module được load sử dụng câu lệnh lsmod, sau đó so sánh với các module bình thường trong danh sách whitelist, từ đó cho biết module nào đáng ngờ đang được load
 import subprocess
 
 # Chạy câu lệnh lsmod và lưu kết quả vào biến output
