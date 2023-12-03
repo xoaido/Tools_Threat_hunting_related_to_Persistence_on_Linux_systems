@@ -212,7 +212,7 @@ def find_ssh_authorized_keys_modified(home_dirs, time_check):
             # If the file was modified in the last 24 hours (86400 seconds)
             if diff <= SECONDS_LIMIT:
                 result = False
-                print(f"User with home directory {dir} has modified their authorized_keys file in the last {time_check} hours.")
+                print(f"ALERT: User with home directory {dir} has modified their authorized_keys file in the last {time_check} hours.")
     
     if (result):
         print("No anonymous activities here!")
