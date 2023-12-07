@@ -1,5 +1,3 @@
-#Kiểm tra có Module nghi ngờ nào được load sử dụng file log journalctl
-
 import subprocess
 import re
 
