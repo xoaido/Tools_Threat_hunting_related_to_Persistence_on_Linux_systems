@@ -1,5 +1,3 @@
-#Tìm kiếm các module nghi ngờ được load, sử dụng file log dmesg
-
 import subprocess
 
 def find_tainted_modules():
@@ -15,8 +13,8 @@ def find_tainted_modules():
                 if "loading out-of-tree module taints kernel" in line:
                     # Split the line into fields and print the second field
                     fields = line.split()
-                    result = fields[2].rstrip(':')
-                    formatted_output = f"Suspicious kernel module loaded: {result}"
+                    module_name = fields[2].rstrip(':')
+                    formatted_output = f"Suspicious kernel module loaded: {module_name}"
                     print(formatted_output)
         else:
             # Print an error message if the command failed
