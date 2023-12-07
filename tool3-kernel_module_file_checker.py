@@ -1,22 +1,19 @@
-#Kiểm tra các file .o hoặc .ko trên hệ thống
-#Cập nhật hàm kiểm tra phiên bản hiện tại của Linux dựa vào đó tìm file .o hay .ko
-
 import os
 import subprocess
 import platform
 import re
 
-# Thư mục gốc để bắt đầu tìm kiếm
+# The root directory to start the search
 root_dir = "/"
 
-# Thư mục bạn muốn loại trừ khỏi tìm kiếm
+# Directories to be excluded from the search
 excluded_dir = "/usr/lib/modules"
 
-# Hàm kiểm tra tệp có phải là tệp kernel module hay không
+# Function to check if a file is a kernel module
 def is_kernel_module(file_path):
     return file_path.endswith(".ko")
 
-# Hàm kiểm tra phiên bản kernel có lớn hơn 2.6 hay không
+# Function to check if the kernel version is greater than 2.6
 def is_kernel_version_supported():
     kernel_version_str = platform.uname().release
     match = re.match(r'^(\d+\.\d+)', kernel_version_str)
@@ -26,7 +23,7 @@ def is_kernel_version_supported():
         return major_version > 2 or (major_version == 2 and minor_version >= 6)
     return False
 
-# Hàm thực hiện kiểm tra loại tệp sử dụng lệnh 'file'
+# Function to check the file type using the 'file' command
 def check_file_type(file_path):
     try:
         result = subprocess.check_output(["file", file_path], stderr=subprocess.STDOUT, universal_newlines=True)
@@ -34,10 +31,10 @@ def check_file_type(file_path):
     except subprocess.CalledProcessError as e:
         return e.output
 
-# Bắt đầu tìm kiếm tệp .ko hoặc .o tùy thuộc vào phiên bản kernel
-print("Liệt kê tất cả các file kernel module nghi ngờ trên hệ thống:")
+# Start searching for .ko or .o files depending on the kernel version
+print("Listing all suspected kernel module files on the system:")
 for foldername, subfolders, filenames in os.walk(root_dir):
-    # Kiểm tra xem thư mục hiện tại có nằm trong danh sách loại trừ không
+    # Check if the current folder is in the excluded list
     if excluded_dir in foldername:
         continue
     for filename in filenames:
