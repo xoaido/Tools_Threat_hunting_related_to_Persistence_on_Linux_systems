@@ -298,14 +298,14 @@ def crontabScanner():
                     is_long = True
 
                 # Check if the cron line contains common commands like "curl", "@", "dig", "http?://*", "nc", "wget"
-                if re.search(r'(curl|@|dig|http\?://\*|nc |wget)', line):
+                if re.search(r'(curl|@|dig|git|http\?://\*|nc |wget)', line):
                     is_common_command = True
 
                 # Check if the cron line contains encoding characters like "^M" or "base64"
                 if re.search(r'(\^M|base64)', line):
                     is_encoded = True
-
-                if re.search(r'(\|*sh|\*sh -c)', line):
+                #Check if the cron string contains any of the listed executable file extensions or not
+                if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                     is_shell_related = True
 
                 # If any indicators are identified, print information for each type
