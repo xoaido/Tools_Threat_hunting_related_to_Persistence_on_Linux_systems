@@ -1,12 +1,10 @@
-#Kiểm tra xem các file trong /etc có chứa dữ liệu bị ẩn (cloaked data) hay không
-
 import mmap
 import os
 import binascii
 
 def process_file(file_path):
     try:
-        # Kiểm tra dung lượng của tệp
+        # Check the size of the file
         file_size = os.path.getsize(file_path)
 
         if file_size == 0:
@@ -28,12 +26,12 @@ def process_file(file_path):
 
             if file_size_standard_io != file_size_mmap:
                 print("\n********************************************************************************************")
-                print("ALERT: {file_path}. File has cloaked data.")
+                print(f"ALERT: {file_path}. File has cloaked data.")
                 print("********************************************************************************************\n\n")
-                return True  # Trả về True nếu có file có kích thước không khớp
+                return True  # Return True if there is a file with mismatched size
     except FileNotFoundError:
         pass
-    return False  # Trả về False nếu không có file nào bị lỗi
+    return False  # Return False if no files have an error
 
 def process_directory(directory_path):
     for root, dirs, files in os.walk(directory_path):
@@ -42,14 +40,14 @@ def process_directory(directory_path):
             process_file(file_path)
 
 def main():
-    folder_path = '/etc'  # Đường dẫn đến thư mục cần kiểm tra
-    any_mismatch = False  # Biến để kiểm tra xem có file nào có kích thước không khớp không
+    folder_path = '/etc'  # Path to the directory to be checked
+    any_mismatch = False  # Variable to check if any files have mismatched sizes
 
     for root, dirs, files in os.walk(folder_path):
         for filename in files:
             file_path = os.path.join(root, filename)
             if process_file(file_path):
-                any_mismatch = True  # Nếu có file có kích thước không khớp, đặt any_mismatch thành True
+                any_mismatch = True  # If there is a file with mismatched size, set any_mismatch to True
 
     if not any_mismatch:
         print("\nOK: All files have matching sizes.\n\n")
