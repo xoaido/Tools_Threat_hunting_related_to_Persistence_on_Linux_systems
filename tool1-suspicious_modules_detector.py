@@ -1,20 +1,21 @@
-#Kiểm tra các module được load sử dụng câu lệnh lsmod, sau đó so sánh với các module bình thường trong danh sách whitelist, từ đó cho biết module nào đáng ngờ đang được load
+# Check the loaded modules using the lsmod command, then compare them with the 
+#normal modules in the whitelist, identifying suspiciously loaded modules
 import subprocess
 
-# Chạy câu lệnh lsmod và lưu kết quả vào biến output
+# Run the lsmod command and save the result to the output variable
 output = subprocess.check_output(["lsmod"]).decode("utf-8")
 
-# Chia kết quả thành các dòng
+# Split the result into lines
 lines = output.split('\n')
 
-# Đọc danh sách module từ tệp module_list.txt
+# Read the list of modules from the module_list.txt file
 with open("module_list.txt", "r") as file:
     excluded_modules = [line.strip() for line in file]
 
-# Tạo một mảng để lưu trữ tên module
+# Create an array to store module names
 module_names = []
 
-# Lặp qua các dòng và lọc ra các module không có trong danh sách excluded_modules
+# Iterate through the lines and filter out modules not in the excluded_modules list
 for line in lines:
     columns = line.split()
     if len(columns) >= 1:
@@ -22,7 +23,7 @@ for line in lines:
         if module_name not in excluded_modules:
             module_names.append(module_name)
 
-# In danh sách tên module
-print("Đây là các module bất thường:")
+# Print the list of module names
+print("Here are the suspicious modules:")
 for module in module_names:
     print(module)
