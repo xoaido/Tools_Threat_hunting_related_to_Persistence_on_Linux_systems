@@ -1,39 +1,39 @@
-#Kiểm tra xem các directory chứa module có quyền write cho Group hoặc Other không
-
+# Check whether directories containing modules have write permissions for Group or Other
+# If the module directory is not found, it can be a potential malicious kernel module 
 import subprocess
 import re
 
-# Sử dụng lệnh lsmod để liệt kê tất cả các module
+# Use the lsmod command to list all modules
 lsmod_output = subprocess.check_output("lsmod", shell=True, text=True)
 
-# Chia đầu ra thành từng dòng và loại bỏ dòng đầu tiên (tiêu đề)
+# Split the output into lines and remove the first line (header)
 lsmod_lines = lsmod_output.splitlines()[1:]
 
-# Tìm tên module từ dòng còn lại
+# Find module names from the remaining lines
 module_names = [line.split()[0] for line in lsmod_lines]
 
-# Duyệt qua từng tên module và sử dụng lệnh modinfo để lấy thông tin
-print("Danh sách các module đáng ngờ:")
+# Iterate through each module name and use the modinfo command to get information
+print("List of suspicious modules:")
 for module_name in module_names:
     try:
         modinfo_output = subprocess.check_output(f"modinfo {module_name}", shell=True, text=True)
 
-        # Sử dụng biểu thức chính quy để tìm trường "filename"
+        # Use regular expression to find the "filename" field
         filename_match = re.search(r'filename:\s+(?P<filename>.+)', modinfo_output)
         if filename_match:
             module_directory = "/".join(filename_match.group("filename").split("/")[:-1])
 
-            # Sử dụng lệnh ls -ld để lấy thông tin về quyền của thư mục
+            # Use the ls -ld command to get information about the directory permissions
             ls_output = subprocess.check_output(f"ls -ld {module_directory}", shell=True, text=True)
 
-            # Kiểm tra xem Group và Other có quyền Write hay không
+            # Check if Group and Other have Write permission
             if "w" in ls_output[5] or "w" in ls_output[8]:
-                # Nếu không có quyền Write, thì in thông tin
+                # If there is no Write permission, print the information
                 print(f"Module: {module_name}")
                 print(f"Module Directory: {module_directory}")
                 print(f"Directory Permissions: {ls_output.split()[0]}")
-                print("=" * 80)  # Dấu phân cách giữa các module
+                print("=" * 80)  # Separator between modules
         else:
-            print(f"Không thể tìm thấy filename cho module {module_name}")
+            print(f"Cannot find filename for module {module_name}")
     except subprocess.CalledProcessError as e:
-        print(f"Không thể lấy thông tin cho module {module_name}: {e}")
+        print(f"Potentially malicious kernel module: {module_name}")
