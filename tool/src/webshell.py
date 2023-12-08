@@ -10,9 +10,9 @@ def webshellScanner(path, valid_regex):
     # Instantiate the Generator Class used for searching, opening, and reading files
     locator = SearchFile()
     tests = []
-    # Error on an invalid path
     if path == "":
        path = "/var/www"
+    # Error on an invalid path
     if os.path.exists(path) == False:
        os.error("Invalid path")
     if valid_regex == "":
@@ -87,7 +87,7 @@ class LanguageIC:
            total += val * (val-1)
 
        try:
-           ic_total =      float(total)/(self.total_char_count * (self.total_char_count - 1))
+           ic_total = float(total)/(self.total_char_count * (self.total_char_count - 1))
        except:
            ic_total = 0
        self.ic_total_results = ic_total
@@ -223,7 +223,6 @@ class Signature:
    def calculate(self, data, filename):
        if not data:
            return "", 0
-       # Lots taken from the wonderful post at http://stackoverflow.com/questions/3115559/exploitable-php-functions
        valid_regex = re.compile('(eval\(|file_put_contents|base64_decode|python_eval|exec\(|passthru|popen|proc_open|pcntl|assert\(|system\(|shell|\`\$)', re.I)
        matches = re.findall(valid_regex, data)
        self.results.append({"filename":filename, "value":len(matches)})
