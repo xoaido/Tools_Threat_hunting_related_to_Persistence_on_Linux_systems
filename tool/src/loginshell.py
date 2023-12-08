@@ -28,7 +28,7 @@ def loginshellScanner():
         r"kill\s+.*",
         r"pkill\s+.*",
         #r"ps\s+.*",
-        r"top\s+.*",
+        #r"top\s+.*",
         r"ifconfig\s+.*",
         r"iptables\s+.*",
         r"useradd\s+.*",
