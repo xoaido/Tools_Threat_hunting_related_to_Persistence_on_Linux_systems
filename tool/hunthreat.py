@@ -68,7 +68,7 @@ def main():
                         dest="regex",
                         default="",
                         #nargs='+',
-                        help="Specify the filename regex to scan web shell",)
+                        help="Specify the filename extension regex to scan web shell",)
       parser.add_argument("--hours",
                         action="store",
                         dest="hours",
