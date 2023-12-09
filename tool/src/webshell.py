@@ -57,7 +57,7 @@ def webshellScanner(path, valid_regex):
 
 class LanguageIC:
    """Class that calculates a file's Index of Coincidence as
-   as well as a a subset of files average Index of Coincidence.
+   as well as a subset of files average Index of Coincidence.
    """
    def __init__(self):
        """Initialize results arrays as well as character counters."""
