@@ -77,7 +77,7 @@ def crontabScanner():
                           is_long = True
 
                      # Check if the cron line contains common commands like "curl", "@", "dig", "http?://*", "nc", "wget"
-                     if re.search(r'(curl|@|dig|git|http\?://\*|nc |wget)', line):
+                     if re.search(r'(curl|@|dig|git|http\?://\*|nc\s|wget)', line):
                           is_common_command = True
 
                      # Check if the cron line contains encoding characters like "^M" or "base64"
