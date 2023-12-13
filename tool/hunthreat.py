@@ -83,7 +83,7 @@ def main():
                         help="Number of keys to scan ssh",)
       args = parser.parse_args()
       # Error on invalid number of arguments
-      if args == None:
+      if args.is_all == args.is_ssh == args.is_rootkit == args.is_crontab == args.is_loginshell == args.is_webshell == False:
           parser.print_help()
           sys.exit(1)
 
