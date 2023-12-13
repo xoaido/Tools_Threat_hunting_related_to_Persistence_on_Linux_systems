@@ -118,9 +118,9 @@ def check_file(file):
                             non_sh_calls.append((line_number, line.strip()))
                             break
 
-        if not suspicious_commands and not non_sh_calls:
-            print("No suspicious commands, encoded characters, or non-.sh file calls found")
-        else:
+        if suspicious_commands or non_sh_calls:
+            print(f"Check suspicious files: {file}")
+            print("-------------------")
             if non_sh_calls:
                 print("Non-.sh file calls:")
                 for line_number, command in non_sh_calls:
@@ -131,21 +131,23 @@ def check_file(file):
                 for line_number, command in suspicious_commands:
                     print(f"Line {line_number}: {command}")
                 print("-------------------")
+            return True  # Return True if suspicious commands or non-.sh file calls are found
     except FileNotFoundError:
-        print(f"File not found: {file}")
+        pass
 
-    return suspicious_commands
+    return False  # Return False if no suspicious commands or non-.sh file calls are found
 
 # Function to check a list of files for suspicious commands, encoded characters, and non-.sh file calls
 def check_files(files):
+    suspicious_files_found = False  # Flag to track if any suspicious files are found
     for file in files:
-        print(f"Checking file: {file}")
-        print("-------------------")
-        suspicious_commands = check_file(file)
-        print("-------------------")
+        if check_file(file):
+            suspicious_files_found = True
 
+    if not suspicious_files_found:
+        print("No suspicious files found")
 
-# List of user-specific files (đã có trong đoạn mã)
+# List of user-specific files 
 user_files = [
     "/root/.bash_profile",
     "/root/.bash_login",
@@ -154,7 +156,7 @@ user_files = [
     "/root/.bash_logout"
 ]
 
-# List of system-wide files (đã có trong đoạn mã)
+# List of system-wide files 
 system_files = [
     "/etc/bash.bashrc",
     "/etc/bash.bash_logout",
@@ -169,8 +171,6 @@ system_files = [
     "/etc/csh.login"
 ]
 
-# Check user-specific files
-check_files(user_files)
 
-# Check system-wide files
-check_files(system_files)
+# Check user-specific files and system-wide files
+check_files(user_files + system_files)
