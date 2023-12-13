@@ -62,15 +62,15 @@ def crontabScanner():
                                 continue # Continue checking the next lines
 
                           continue  # Skip the common SHELL configuration line
-                     is_malicious = False
+                    #  is_malicious = False
                      is_common_command = False
                      is_long = False
                      is_encoded = False
                      is_shell_related = False
                      
-                     # Check if the cron line contains "/tmp"
-                     if "/tmp" in line:
-                          is_malicious = True
+                    #  # Check if the cron line contains "/tmp"
+                    #  if "/tmp" in line:
+                    #       is_malicious = True
 
                      # Check the length of the cron line
                      if len(line) > 200:
@@ -92,10 +92,10 @@ def crontabScanner():
                           print_category_header("Very long strings, which may indicate encoding:")
                           print_cron_line(line)
                           is_abnormal_schedule = True
-                     if is_malicious:
-                          print_category_header("Malicious code often exists in this directory:")
-                          print_cron_line(line)
-                          is_abnormal_schedule = True
+                    #  if is_malicious:
+                    #       print_category_header("Malicious code often exists in this directory:")
+                    #       print_cron_line(line)
+                    #       is_abnormal_schedule = True
                      if is_common_command:
                           print_category_header("These are commonly used commands to connect to the internet:")
                           print_cron_line(line)
