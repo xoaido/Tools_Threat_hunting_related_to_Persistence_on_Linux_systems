@@ -2,7 +2,7 @@ import os
 import re
 import colorama
 def crontabScanner():
-     print("\n[*]----------------------------[[ CronTab Scan ]]---------------------------[*]")
+     print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
      # This function takes a path and returns the username from the path
           return os.path.basename(path)
