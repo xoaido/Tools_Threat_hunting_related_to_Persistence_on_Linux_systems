@@ -2,7 +2,7 @@ import os
 import re
 import colorama
 def crontabScanner():
-     print("\n[*]-------------------------------[[ CronTab Scan ]]---------------------------[*]")
+     print("\n[*]----------------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
      # This function takes a path and returns the username from the path
           return os.path.basename(path)
@@ -114,6 +114,6 @@ def crontabScanner():
 
      # Check and report if there is no abnormal scheduling
      if is_abnormal_schedule:
-          print(colorama.Fore.LIGHTRED_EX + "======>Crontab does have threat" + colorama.Fore.RESET)
+          print(colorama.Fore.LIGHTRED_EX + "==> Check Crontab done: Crontab does have threat" + colorama.Fore.RESET)
      else:
-          print(colorama.Fore.LIGHTGREEN_EX + "======>Crontab does not have threat" + colorama.Fore.RESET)
+          print(colorama.Fore.LIGHTGREEN_EX + "==> Check Crontab done: Crontab does not have threat" + colorama.Fore.RESET)
