@@ -1,7 +1,8 @@
 import os
 import re
 import colorama
-from datetime import datetime, timedelta, calendar
+from datetime import datetime
+import calendar
 
 def is_valid_cron_schedule(schedule):
     # Kiểm tra xem lịch trình cron có hợp lệ hay không
@@ -42,6 +43,14 @@ def crontabScanner():
      def print_cron_line(line):
           print(f"Cron: {line}")
           print("--------------------------------------------------------------")
+          
+     def is_invalid_date(day, month, year):
+        try:
+            # Thử tạo ngày từ các thành phần
+            datetime(year, month, day)
+            return False
+        except ValueError:
+            return True
      # Check for root privileges
      if os.geteuid() != 0:
           print("This script requires root privileges. Please run it with sudo or as root.")
@@ -114,8 +123,14 @@ def crontabScanner():
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
                      if re.search(r'(\d{1,2}/\d{1,2})', line):
-                         if not is_valid_cron_schedule(line):
-                              print_category_header("Invalid cron schedule:")
+                         minute, hour, day_of_month, month, day_of_week = map(int, line.split()[:5])
+
+                         # Get the current year
+                         current_year = datetime.now().year
+
+                         # Check if the day of the month is valid
+                         if is_invalid_date(day_of_month, month, current_year):
+                              print_category_header("Invalid day of the month:")
                               print_cron_line(line)
                               is_abnormal_schedule = True
                      # If any indicators are identified, print information for each type
