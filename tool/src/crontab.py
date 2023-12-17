@@ -18,13 +18,7 @@ def crontabScanner():
           print(f"Cron: {line}")
           print("--------------------------------------------------------------")
 
-     def is_invalid_date(day, month, year):
-        try:
-            # Thử tạo ngày từ các thành phần
-            datetime(year, month, day)
-            return False
-        except ValueError:
-            return True
+     
      # Check for root privileges
      if os.geteuid() != 0:
           print("This script requires root privileges. Please run it with sudo or as root.")
