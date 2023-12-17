@@ -2,7 +2,28 @@ import os
 import re
 import colorama
 from datetime import datetime
-from croniter import croniter
+import calendar
+
+def is_valid_cron_schedule(schedule):
+    # Kiểm tra xem lịch trình cron có hợp lệ hay không
+    try:
+        # Tách lịch trình thành các thành phần
+        minute, hour, day_of_month, month, day_of_week = schedule.split()
+
+        # Chuyển các thành phần thành số nguyên
+        minute, hour, day_of_month, month, day_of_week = map(int, [minute, hour, day_of_month, month, day_of_week])
+
+        # Lấy năm hiện tại
+        current_year = datetime.now().year
+
+        # Kiểm tra xem ngày trong tháng có hợp lệ không
+        if day_of_month > calendar.monthrange(current_year, month)[1]:
+            return False
+
+        return True
+    except ValueError:
+        return False
+    
 def crontabScanner():
      print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
@@ -89,13 +110,11 @@ def crontabScanner():
                      if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
-                     try:
-                         cron_schedule = croniter(line)
-                         cron_schedule.get_next(datetime)
-                     except ValueError:
-                         print_category_header("Invalid cron schedule:")
-                         print_cron_line(line)
-                         is_abnormal_schedule = True
+                     if re.search(r'(\d{1,2}/\d{1,2})', line):
+                         if not is_valid_cron_schedule(line):
+                              print_category_header("Invalid cron schedule:")
+                              print_cron_line(line)
+                              is_abnormal_schedule = True
                      # If any indicators are identified, print information for each type
                      if is_long:
                           print_category_header("Very long strings, which may indicate encoding:")
