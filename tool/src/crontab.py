@@ -1,8 +1,7 @@
 import os
 import re
 import colorama
-from datetime import datetime
-import calendar
+from datetime import datetime, timedelta, calendar
 
 def is_valid_cron_schedule(schedule):
     # Kiểm tra xem lịch trình cron có hợp lệ hay không
@@ -20,10 +19,14 @@ def is_valid_cron_schedule(schedule):
         if day_of_month > calendar.monthrange(current_year, month)[1]:
             return False
 
+        # Kiểm tra xem giờ và phút có hợp lệ không
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            return False
+
         return True
     except ValueError:
         return False
-    
+
 def crontabScanner():
      print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
