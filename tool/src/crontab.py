@@ -1,6 +1,8 @@
 import os
 import re
 import colorama
+from datetime import datetime
+from croniter import croniter
 def crontabScanner():
      print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
@@ -73,11 +75,11 @@ def crontabScanner():
                     #       is_malicious = True
 
                      # Check the length of the cron line
-                     if len(line) > 200:
+                     if len(line) > 100:
                           is_long = True
 
                      # Check if the cron line contains common commands like "curl", "@", "dig", "http?://*", "nc", "wget"
-                     if re.search(r'(curl|@|dig|git|http\?://\*|nc\s|wget)', line):
+                     if re.search(r'(curl|@|dig|git|http[s]?|nc\s|wget)', line):
                           is_common_command = True
 
                      # Check if the cron line contains encoding characters like "^M" or "base64"
@@ -86,7 +88,14 @@ def crontabScanner():
                      #Check if the cron string contains any of the listed executable file extensions or not
                      if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                           is_shell_related = True
-
+                    # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
+                     try:
+                         cron_schedule = croniter(line)
+                         cron_schedule.get_next(datetime)
+                     except ValueError:
+                         print_category_header("Invalid cron schedule:")
+                         print_cron_line(line)
+                         is_abnormal_schedule = True
                      # If any indicators are identified, print information for each type
                      if is_long:
                           print_category_header("Very long strings, which may indicate encoding:")
