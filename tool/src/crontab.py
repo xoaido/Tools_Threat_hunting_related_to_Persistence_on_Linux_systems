@@ -33,6 +33,12 @@ def crontabScanner():
      
      # Add cron paths for each user to the list
      cron_paths.extend([os.path.join(user_cron_dir, user) for user in users])
+     # Add paths for files in /etc/cron.d
+     etc_cron_d_dir = "/etc/cron.d"
+     etc_cron_d_files = [f for f in os.listdir(etc_cron_d_dir) if os.path.isfile(os.path.join(etc_cron_d_dir, f))]
+
+     # Add cron paths for each file in /etc/cron.d to the list
+     cron_paths.extend([os.path.join(etc_cron_d_dir, file) for file in etc_cron_d_files])
 
      # Variable to check if there is any abnormal scheduling
      is_abnormal_schedule = False
