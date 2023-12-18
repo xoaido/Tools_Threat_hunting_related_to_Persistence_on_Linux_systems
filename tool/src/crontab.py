@@ -108,7 +108,7 @@ def crontabScanner():
                      if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
-                     if line[0].isdigit() or line[0] == '*':
+                     if line and (line[0].isdigit() or line[0] == '*'):
                         # Tách các phần trong dòng lập lịch bằng khoảng trắng
                         parts = line.split()
                         # Lấy giá trị của thứ 3 và thứ 4
