@@ -46,7 +46,7 @@ def crontabScanner():
      for cron_path in cron_paths:
           try:
                 username = get_username_from_path(cron_path)
-                print_user_header(username)
+               #  print_user_header(username)
 
                 with open(cron_path, 'r') as file:
                      crontab_output = file.read()
@@ -98,6 +98,9 @@ def crontabScanner():
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
                      
                      # If any indicators are identified, print information for each type
+                     if is_common_command or is_long or is_encoded or is_shell_related:
+                         print_user_header(username)      
+
                      if is_long:
                           print_category_header("Very long strings, which may indicate encoding:")
                           print_cron_line(line)
@@ -122,10 +125,7 @@ def crontabScanner():
                 
           except FileNotFoundError:
                 print(f"File not found: {cron_path}")
-           # Reset is_abnormal_schedule for the next user
-          is_abnormal_schedule = False
-          if not is_abnormal_schedule:
-               print(colorama.Fore.LIGHTGREEN_EX + "==> Crontab does not have threat" + colorama.Fore.RESET)
+           
      # Check and report if there is no abnormal scheduling
      if is_abnormal_schedule:
           print(colorama.Fore.LIGHTRED_EX + "==> Check Crontab done: Crontab does have threat" + colorama.Fore.RESET)
