@@ -1,6 +1,7 @@
 import os
 import re
 import colorama
+from datetime import datetime
 
 def crontabScanner():
      print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
@@ -18,6 +19,17 @@ def crontabScanner():
           print(f"Cron: {line}")
           print("--------------------------------------------------------------")
 
+     def is_valid_date(day, month, year):
+        try:
+            # Tạo một đối tượng datetime với ngày, tháng và năm
+            datetime_object = datetime(year=year, month=month, day=day)
+            return True
+        except ValueError:
+            return False
+        
+     def convert_asterisk_to_one(value):
+        # Chuyển đổi giá trị dấu '*' thành 1
+        return int(value) if value.isdigit() else 1
      
      # Check for root privileges
      if os.geteuid() != 0:
@@ -76,7 +88,7 @@ def crontabScanner():
                      is_long = False
                      is_encoded = False
                      is_shell_related = False
-                     
+                     is_invalid_date =False
                     #  # Check if the cron line contains "/tmp"
                     #  if "/tmp" in line:
                     #       is_malicious = True
@@ -96,9 +108,24 @@ def crontabScanner():
                      if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
-                     
+                     if line[0].isdigit() or line[0] == '*':
+                        # Tách các phần trong dòng lập lịch bằng khoảng trắng
+                        parts = line.split()
+                        # Lấy giá trị của thứ 3 và thứ 4
+                        day_of_month = convert_asterisk_to_one(parts[2])
+                        month = convert_asterisk_to_one(parts[3])
+                        # Lấy năm hiện tại
+                        current_year = datetime.now().year
+
+                        try:
+                            if not is_valid_date(day_of_month, month, current_year):
+                                # print(f"Day of Month: {day_of_month}, Month: {month}, Year: {current_year} - Valid Date")
+                                is_invalid_date =True
+                        except ValueError as e:
+                            print(f"Error: {e}")
+
                      # If any indicators are identified, print information for each type
-                     if is_common_command or is_long or is_encoded or is_shell_related:
+                     if is_common_command or is_long or is_encoded or is_shell_related or is_invalid_date:
                          print_user_header(username)      
 
                      if is_long:
@@ -121,7 +148,10 @@ def crontabScanner():
                           print_category_header("Used to run a shell on the system")
                           print_cron_line(line)
                           is_abnormal_schedule = True
-
+                     if  is_invalid_date:
+                          print_category_header(f"Day of Month: {day_of_month}, Month: {month}, Year: {current_year} - Invalid Date")
+                          print_cron_line(line)
+                          is_abnormal_schedule = True
                 
           except FileNotFoundError:
                 print(f"File not found: {cron_path}")
