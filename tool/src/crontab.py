@@ -118,12 +118,12 @@ def crontabScanner():
                           print_category_header("Used to run a shell on the system")
                           print_cron_line(line)
                           is_abnormal_schedule = True
-                          
-                if not is_abnormal_schedule:
-                    print(colorama.Fore.LIGHTGREEN_EX + "==> Crontab does not have threat" + colorama.Fore.RESET)
+
+                
           except FileNotFoundError:
                 print(f"File not found: {cron_path}")
-
+          if not is_abnormal_schedule:
+               print(colorama.Fore.LIGHTGREEN_EX + "==> Crontab does not have threat" + colorama.Fore.RESET)
      # Check and report if there is no abnormal scheduling
      if is_abnormal_schedule:
           print(colorama.Fore.LIGHTRED_EX + "==> Check Crontab done: Crontab does have threat" + colorama.Fore.RESET)
