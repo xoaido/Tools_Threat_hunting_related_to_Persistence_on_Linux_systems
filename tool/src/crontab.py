@@ -12,7 +12,7 @@ def crontabScanner():
           print(f"\n[*]----------------------[[ User: {username} ]]----------------------[*]")
 
      def print_category_header(category_message):
-          print(f"\n======> {category_message}")
+          print(f"\n{colorama.Fore.LIGHTRED_EX}======> {category_message}{colorama.Fore.RESET}")
 
      def print_cron_line(line):
           print(f"Cron: {line}")
@@ -82,7 +82,7 @@ def crontabScanner():
                     #       is_malicious = True
 
                      # Check the length of the cron line
-                     if len(line) > 100:
+                     if len(line) > 200:
                           is_long = True
 
                      # Check if the cron line contains common commands like "curl", "@", "dig", "http?://*", "nc", "wget"
