@@ -122,6 +122,8 @@ def crontabScanner():
                 
           except FileNotFoundError:
                 print(f"File not found: {cron_path}")
+           # Reset is_abnormal_schedule for the next user
+          is_abnormal_schedule = False
           if not is_abnormal_schedule:
                print(colorama.Fore.LIGHTGREEN_EX + "==> Crontab does not have threat" + colorama.Fore.RESET)
      # Check and report if there is no abnormal scheduling
