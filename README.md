@@ -34,8 +34,8 @@ options:
 Note: 
   When conducting Web Shell and SSH scans, you have more than one option. If you solely utilise the -r or -s option, the scan will default to the following information:
 
-  --dir DIRECTORIES: The default specifies the directories for scan web shell: /var/www
-  --regex REGEX: The default specify filename extension regex for scan web shell: (\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)
-  -- hours HOURS: The default interval for checking the last modification of the authorized_keys file is set to 24 hours.
-  -- keys KEYS: The default number of keys that exist in file authorized_keys is 10 keys.
+  * --dir DIRECTORIES: The default specifies the directories for scan web shell: /var/www
+  * --regex REGEX: The default specify filename extension regex for scan web shell: (\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)
+  * -- hours HOURS: The default interval for checking the last modification of the authorized_keys file is set to 24 hours.
+  * -- keys KEYS: The default number of keys that exist in file authorized_keys is 10 keys.
    
