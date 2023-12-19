@@ -32,9 +32,9 @@ def rootkitScanner():
                 module_names.append(module_name)
 
     # Print the list of module names
-    print("Here are the suspicious modules:")
+    print("\n----------Here are the suspicious modules:----------")
     for module in module_names:
-        print(module)
+        print(" + ",module)
     # Check whether directories containing modules have write permissions for Group or Other
     # If the module directory is not found, it can be a potential malicious kernel module 
 
@@ -48,7 +48,7 @@ def rootkitScanner():
     module_names = [line.split()[0] for line in lsmod_lines]
 
     # Iterate through each module name and use the modinfo command to get information
-    print("List of suspicious modules:")
+    print("\n Info of suspicious modules:")
     for module_name in module_names:
         try:
             modinfo_output = subprocess.check_output(f"modinfo {module_name}", shell=True, text=True)
@@ -64,15 +64,15 @@ def rootkitScanner():
                 # Check if Group and Other have Write permission
                 if "w" in ls_output[5] or "w" in ls_output[8]:
                     # If there is no Write permission, print the information
-                    print(f"Module: {module_name}")
-                    print(f"Module Directory: {module_directory}")
-                    print(f"Directory Permissions: {ls_output.split()[0]}")
-                    print("=" * 80)  # Separator between modules
+                    print(f"\n Module: {module_name}")
+                    print(f"\n Module Directory: {module_directory}")
+                    print(f"\n Directory Permissions: {ls_output.split()[0]}")
             else:
-                print(f"Cannot find filename for module {module_name}")
+                print(f"\n Cannot find filename for module {module_name}")
         except subprocess.CalledProcessError as e:
-            print(f"Potentially malicious kernel module: {module_name}")
+            print(f"\n Potentially malicious kernel module: {module_name}")
 
+    print("=" * 80)  # Separator between modules
     # The root directory to start the search
     root_dir = "/"
 
@@ -102,7 +102,7 @@ def rootkitScanner():
             return e.output
 
     # Start searching for .ko or .o files depending on the kernel version
-    print("Listing all suspected kernel module files on the system:")
+    print("\n----------Listing all suspected kernel module files on the system:----------")
     for foldername, subfolders, filenames in os.walk(root_dir):
         # Check if the current folder is in the excluded list
         if excluded_dir in foldername:
@@ -113,10 +113,10 @@ def rootkitScanner():
                 if is_kernel_module(filename):
                     file_info = check_file_type(file_path)
                     if "ELF" in file_info:
-                        print(f"{file_path}")
+                        print(f"\n + {file_path}")
             else:
                 if filename.endswith(".o"):
-                    print(f"{file_path}")
+                    print(f"\n + {file_path}")
 
     def find_tainted_modules():
         try:
@@ -132,13 +132,13 @@ def rootkitScanner():
                         # Split the line into fields and print the second field
                         fields = line.split()
                         module_name = fields[2].rstrip(':')
-                        formatted_output = f"Suspicious kernel module loaded: {module_name}"
+                        formatted_output = f"\n Suspicious kernel module loaded: {module_name}"
                         print(formatted_output)
             else:
                 # Print an error message if the command failed
-                print(f"Error running 'dmesg': {result.stderr}")
+                print(f"\n Error running 'dmesg': {result.stderr}")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"\n An error occurred: {e}")
 
     # Call the function to extract and print the second field from matching lines
     find_tainted_modules()
@@ -152,17 +152,17 @@ def rootkitScanner():
             matches = re.finditer(r'(?P<timestamp>\w+ \d+ \d+:\d+:\d+) (?P<hostname>\w+) (?P<process>\w+)\[(?P<pid>\d+)\]:\s+(?P<user>\w+) : TTY=(?P<tty>\S+) ; PWD=(?P<pwd>\S+) ; USER=(?P<command_user>\w+) ; COMMAND=/usr/sbin/insmod (?P<module>.+)', result.stdout)
 
             # Print the header
-            print("Suspicious insmod activity found:")
+            print("\n Suspicious insmod activity found:")
 
             # Print PWD and Module for each match
             for match in matches:
-                print(f"PWD: {match['pwd']}")
-                print(f"Module: {match['module']}")
+                print(f"\n + PWD: {match['pwd']}")
+                print(f"\n + Module: {match['module']}")
                 print()
 
         except subprocess.CalledProcessError as e:
             # Handle the case where the command returns a non-zero exit code
-            print(f"Error running journalctl: {e}")
+            print(f"\n Error running journalctl: {e}")
     run_journalctl()
 
     def process_file(file_path):
@@ -188,7 +188,7 @@ def rootkitScanner():
 
                 if file_size_standard_io != file_size_mmap:
                     print("\n********************************************************************************************")
-                    print(f"ALERT: {file_path}. File has cloaked data.")
+                    print(f"  ALERT: {file_path}. File has cloaked data.")
                     print("********************************************************************************************\n\n")
                     return True  # Return True if there is a file with mismatched size
         except FileNotFoundError:
