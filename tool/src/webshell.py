@@ -78,17 +78,19 @@ def webshellScanner(path, valid_regex, api):
                 + colorama.Fore.RESET
             )
             for x in range(count):
-                print(f"------File: {rank_sorted[x][0]}------")
                 servicer = Servicer(rank_sorted[x][0])
                 data = servicer.unphp()
-                if data = 1:
+                if data == 1:
                     print("Api key empty!!!")
-                if data = 2 or data = 3:
-
-
-                for key, value in data.items():
+                    break
+                print(f"------File: {rank_sorted[x][0]}------")
+                if data == 2:
+                    print("Scan error!!!")
+                if data:
+                    for key, value in data.items():
                     if key in ["md5", "functions", "variables", "eval_count"]:
                         print(" +",key, ": ", value, "\n")
+                
             print(
                 colorama.Fore.LIGHTYELLOW_EX
                 + "\n[[ VirusTotal ]]"
@@ -97,6 +99,21 @@ def webshellScanner(path, valid_regex, api):
             for x in range(count//2):
                 servicer = Servicer(rank_sorted[x][0])
                 response = servicer.virustotal()
+                if response == 1:
+                    print("Api key empty!!!")
+                    break
+                if response == 2:
+                    print("Scan error!!!")
+                if response == 3:
+                    print(
+                        " {0:>7}         {1}".format(
+                            colorama.Fore.GREEN
+                            + colorama.Style.BRIGHT
+                            + "Undetected"
+                            + colorama.Fore.RESET,
+                            rank_sorted[x][0],
+                        )
+                    )
                 if response:
                     print(
                         " {0:>7}           {1}".format(
@@ -107,16 +124,7 @@ def webshellScanner(path, valid_regex, api):
                             rank_sorted[x][0],
                         )
                     )
-                else:
-                    print(
-                        " {0:>7}         {1}".format(
-                            colorama.Fore.GREEN
-                            + colorama.Style.BRIGHT
-                            + "Undetected"
-                            + colorama.Fore.RESET,
-                            rank_sorted[x][0],
-                        )
-                    )
+                
 
         else:
             print("NO INTERNET")
@@ -505,7 +513,7 @@ class Servicer:
                 return status
             return data
         except requests.ConnectionError:
-            status = 3
+            status = 2
             return status
 
     # Service Provider: <https://virustotal.com>
@@ -535,14 +543,14 @@ class Servicer:
             try:
                 report = request.json()
             except:
-                status = 3
+                status = 2
                 return status
             if report["response_code"] == 0 or report["positives"] == 0:
-                status = 4
+                status = 3
                 return status
             return report
         except requests.ConnectionError:
-            status = 5
+            status = 2
             return status
 
 
