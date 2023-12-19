@@ -88,8 +88,8 @@ def webshellScanner(path, valid_regex, api):
                     print("Scan error!!!")
                 if data:
                     for key, value in data.items():
-                    if key in ["md5", "functions", "variables", "eval_count"]:
-                        print(" +",key, ": ", value, "\n")
+                        if key in ["md5", "functions", "variables", "eval_count"]:
+                            print(" +",key, ": ", value, "\n")
                 
             print(
                 colorama.Fore.LIGHTYELLOW_EX
