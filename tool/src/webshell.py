@@ -495,7 +495,6 @@ class Servicer:
             if data["result"] == "error":
                 return False
             return data
-            sleep(2)
         except requests.ConnectionError as e:
             print(f"ConnectionError: {e}")
             return False
