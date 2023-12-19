@@ -7,7 +7,7 @@ import json
 import requests
 from time import sleep
 from collections import defaultdict
-
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 def webshellScanner(path, valid_regex, api):
     # Smallest filesize to checkfor in bytes.
@@ -466,6 +466,9 @@ class SignatureInLog:
 
 class Servicer:
     """Servicer class services the use of external services (APIs)."""
+
+    # Suppress only the InsecureRequestWarning from urllib3 needed for disabling SSL warnings
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def __init__(self, file):
         try:
