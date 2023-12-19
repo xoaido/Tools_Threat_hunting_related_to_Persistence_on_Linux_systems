@@ -114,6 +114,7 @@ def webshellScanner(path, valid_regex, api):
                             rank_sorted[x][0],
                         )
                     )
+                    continue
                 if response:
                     print(
                         " {0:>7}           {1}".format(
