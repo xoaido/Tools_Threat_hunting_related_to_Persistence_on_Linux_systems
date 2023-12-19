@@ -489,6 +489,7 @@ class Servicer:
                 "https://www.unphp.net/api/v2/post",
                 files={"file": self.file},
                 data={"api_key": apikey},
+                verify=False
             )
             data = r.json()
             if data["result"] == "error":
@@ -509,6 +510,7 @@ class Servicer:
                 "https://www.virustotal.com/vtapi/v2/file/scan",
                 files={"file": self.file},
                 data={"apikey": apikey},
+                verify=False
             )
             data = r.json()
             if data["response_code"] == 0:
@@ -517,6 +519,7 @@ class Servicer:
             request = requests.get(
                 "https://www.virustotal.com/vtapi/v2/file/report",
                 params={"apikey": apikey, "resource": data["resource"]},
+                verify=False
             )
             try:
                 report = request.json()
