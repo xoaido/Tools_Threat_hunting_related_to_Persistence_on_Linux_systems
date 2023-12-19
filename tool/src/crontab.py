@@ -101,8 +101,8 @@ def crontabScanner():
                      if re.search(r'(curl|@|dig|git|http[s]?|nc\s|wget)', line):
                           is_common_command = True
 
-                     # Check if the cron line contains encoding characters like "^M" or "base64"
-                     if re.search(r'(\^M|base64)', line):
+                     # Check if the cron line contains encoding characters like "^M", "base64",....
+                     if re.search(r'(\^M|base64|hex|gzip|url|rot13|uuencode)', line):
                           is_encoded = True
                      #Check if the cron string contains any of the listed executable file extensions or not
                      if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
