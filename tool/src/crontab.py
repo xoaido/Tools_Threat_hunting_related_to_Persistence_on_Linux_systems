@@ -21,14 +21,14 @@ def crontabScanner():
 
      def is_valid_date(day, month, year):
         try:
-            # Tạo một đối tượng datetime với ngày, tháng và năm
+            # Create a datetime object with day, month, and year.
             datetime_object = datetime(year=year, month=month, day=day)
             return True
         except ValueError:
             return False
         
      def convert_asterisk_to_one(value):
-        # Chuyển đổi giá trị dấu '*' thành 1
+        # Convert the value of '*' to 1.
         return int(value) if value.isdigit() else 1
      
      # Check for root privileges
@@ -109,12 +109,12 @@ def crontabScanner():
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
                      if line and (line[0].isdigit() or line[0] == '*'):
-                        # Tách các phần trong dòng lập lịch bằng khoảng trắng
+                        # Split the components in the cron schedule line by whitespace
                         parts = line.split()
-                        # Lấy giá trị của thứ 3 và thứ 4
+                        # Get the value of the 3rd and 4th elements.
                         day_of_month = convert_asterisk_to_one(parts[2])
                         month = convert_asterisk_to_one(parts[3])
-                        # Lấy năm hiện tại
+                        # Get the current year
                         current_year = datetime.now().year
 
                         try:
