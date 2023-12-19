@@ -138,33 +138,8 @@ def sshScanner(keys, hours):
             print("No anonymous activities here!")
         return result
 
-    # Function 6: Check for option set in authorized_keys file
-    def find_ssh_authorized_keys_options_search(home_dirs):
-        # result = True: not exist any anonmyous activities
-        result = True
-        for dir in home_dirs:
-            authorized_keys_path = os.path.join(dir, '.ssh', 'authorized_keys')
 
-            if os.path.isfile(authorized_keys_path):
-                print(f"Processing {authorized_keys_path}.")
-                with open(authorized_keys_path, 'r') as auth_keys_file:
-                    options_set = []
-
-                    for line in auth_keys_file:
-                        if re.search(r'^(command|environment|agent-forwarding|port-forwarding|user-rc|X11-forwarding|.*,\s*(command|environment|agent-forwarding|port-forwarding|user-rc|X11-forwarding))', line):
-                            options_set.append(line.strip())
-
-                    if options_set:
-                        result = False
-                        print(f"ALERT: User with home directory {dir} has options set in their authorized_keys file:")
-                        print("\n".join(options_set))
-        
-        if (result):
-            print("No anonymous activities here!")
-        return result
-
-
-    # Function 7: Check for the modification of authorized_keys file in a limited time (24h here)
+    # Function 6: Check for the modification of authorized_keys file in a limited time (24h here)
     def find_ssh_authorized_keys_modified(home_dirs, time_check):
         # result = True: not exist any anonmyous activities
         result = True
@@ -223,18 +198,13 @@ def sshScanner(keys, hours):
     result5 = find_ssh_authorized_keys_excessive(home_dirs, keys)
     print("-----------------------------------------------------------")
 
-    # Function 6: Check for option set in authorized_keys file
-    print("\n[[ Check for option set in authorized_keys file ]]")
-    result6 = find_ssh_authorized_keys_options_search(home_dirs)
-    print("-----------------------------------------------------------")
-
-    # Function 7: Check for the modification of authorized_keys file in a limited time (default: 24h here)
+    # Function 6: Check for the modification of authorized_keys file in a limited time (default: 24h here)
     print("\n[[ Check for the modification of authorized_keys file in a limited time {0}h ]]".format(hours))
-    result7 = find_ssh_authorized_keys_modified(home_dirs, hours)
+    result6 = find_ssh_authorized_keys_modified(home_dirs, hours)
     print("-----------------------------------------------------------")
 
 
-    if (result1 & result2 & result3 & result4 & result5 & result6 & result7):
+    if (result1 & result2 & result3 & result4 & result5 & result6 ):
         print(colorama.Fore.LIGHTGREEN_EX + "\n==> Check SSH done: No anonymous activities!" + colorama.Fore.RESET)
     else:
         print(colorama.Fore.LIGHTRED_EX + "\n==> Check SSH done: Find some anonymous activities above" + colorama.Fore.RESET)
