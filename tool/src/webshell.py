@@ -45,7 +45,8 @@ def webshellScanner(path, valid_regex, api):
     # Print some stats
     print("\n[*]-------------------------[[ WebShell Scan ]]-------------------------[*]")
     print("\n[[ Total files scanned: %i ]]" % (fileCount))
-
+    if fileCount == 0:
+        return
     # Print top rank lists
     rank_list = {}
     for test in tests:
@@ -77,9 +78,14 @@ def webshellScanner(path, valid_regex, api):
                 + colorama.Fore.RESET
             )
             for x in range(count):
+                print(f"------File: {rank_sorted[x][0]}------")
                 servicer = Servicer(rank_sorted[x][0])
                 data = servicer.unphp()
-                print(f"------File: {rank_sorted[x][0]}------")
+                if data = 1:
+                    print("Api key empty!!!")
+                if data = 2 or data = 3:
+
+
                 for key, value in data.items():
                     if key in ["md5", "functions", "variables", "eval_count"]:
                         print(" +",key, ": ", value, "\n")
@@ -482,8 +488,10 @@ class Servicer:
     # Returns decoded and de-obfuscated script
     def unphp(self):
         apikey = self.config["UnPHP_apikey"]
+        status = 0
         if apikey == "":
-            return False
+            status = 1
+            return status
         try:
             r = requests.post(
                 "https://www.unphp.net/api/v2/post",
@@ -493,17 +501,20 @@ class Servicer:
             )
             data = r.json()
             if data["result"] == "error":
-                return False
+                status = 2
+                return status
             return data
-        except requests.ConnectionError as e:
-            print(f"ConnectionError: {e}")
-            return False
+        except requests.ConnectionError:
+            status = 3
+            return status
 
     # Service Provider: <https://virustotal.com>
     def virustotal(self):
         apikey = self.config["VirusTotal_apikey"]
+        status = 0
         if apikey == "":
-            return False
+            status = 1
+            return status
         try:
             r = requests.post(
                 "https://www.virustotal.com/vtapi/v2/file/scan",
@@ -513,7 +524,8 @@ class Servicer:
             )
             data = r.json()
             if data["response_code"] == 0:
-                return False
+                status = 2
+                return status
             sleep(30)
             request = requests.get(
                 "https://www.virustotal.com/vtapi/v2/file/report",
@@ -523,13 +535,15 @@ class Servicer:
             try:
                 report = request.json()
             except:
-                return False
+                status = 3
+                return status
             if report["response_code"] == 0 or report["positives"] == 0:
-                return False
+                status = 4
+                return status
             return report
-        except requests.ConnectionError as e:
-            print(f"ConnectionError: {e}")
-            return False
+        except requests.ConnectionError:
+            status = 5
+            return status
 
 
 def resultsAddRank(results):
