@@ -128,7 +128,7 @@ def webshellScanner(path, valid_regex, api):
                 
 
         else:
-            print("NO INTERNET")
+            print("\nCan not use Api service (NO INTERNET)")
 
 
 class LanguageIC:
