@@ -10,7 +10,7 @@ def crontabScanner():
           return os.path.basename(path)
 
      def print_user_header(username):
-          print(f"\n[*]----------------------[[ User: {username} ]]----------------------[*]")
+          print(f"\n----------------------[[ User: {username} ]]----------------------")
 
      def print_category_header(category_message):
           print(f"\n{colorama.Fore.LIGHTRED_EX}======> {category_message}{colorama.Fore.RESET}")
