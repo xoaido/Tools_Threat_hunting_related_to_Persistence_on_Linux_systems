@@ -48,7 +48,7 @@ def rootkitScanner():
     module_names = [line.split()[0] for line in lsmod_lines]
 
     # Iterate through each module name and use the modinfo command to get information
-    print("\n Info of suspicious modules:")
+    print("\n Info of suspicious modules:\n")
     for module_name in module_names:
         try:
             modinfo_output = subprocess.check_output(f"modinfo {module_name}", shell=True, text=True)
