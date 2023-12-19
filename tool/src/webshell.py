@@ -81,11 +81,11 @@ def webshellScanner(path, valid_regex, api):
                 servicer = Servicer(rank_sorted[x][0])
                 data = servicer.unphp()
                 if data == 1:
-                    print("Api key empty!!!")
+                    print("\nApi key empty!!!")
                     break
                 print(f"------File: {rank_sorted[x][0]}------")
                 if data == 2:
-                    print("Scan error!!!")
+                    print("\nScan error!!!")
                 if data:
                     for key, value in data.items():
                         if key in ["md5", "functions", "variables", "eval_count"]:
@@ -100,10 +100,10 @@ def webshellScanner(path, valid_regex, api):
                 servicer = Servicer(rank_sorted[x][0])
                 response = servicer.virustotal()
                 if response == 1:
-                    print("Api key empty!!!")
+                    print("\nApi key empty!!!")
                     break
                 if response == 2:
-                    print("Scan error!!!")
+                    print("\nScan error!!!")
                 if response == 3:
                     print(
                         " {0:>7}         {1}".format(
