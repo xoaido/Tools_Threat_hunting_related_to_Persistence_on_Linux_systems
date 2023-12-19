@@ -47,13 +47,15 @@ def sshScanner(keys, hours):
                 if x:
                     result = False
                     print("ALERT: Remote root login via SSH is allowed")
-
+    
                 # Case 2: PasswordAuthentication yes --> allow ssh using password
-                x = re.search("\n[^\#]*passwordauthentication\s+yes", contents)
-                if x:
+                x = re.search("\npasswordauthentication\s+no", contents)
+                if x is None:
                     result = False
                     print("ALERT: Password is allowed to Remote login via SSH")
-            return result
+        if (result):
+            print("No anonymous activities here!")
+        return result
 
     # Function 3: Check the passphrase of private key: trong trường hợp có lấy được private key thì cũng không thể kết nối được
         # Ktra những file trong .ssh, có PRIVATE --> Check the passphrase
