@@ -53,6 +53,15 @@ def sshScanner(keys, hours):
                 if x is None:
                     result = False
                     print("ALERT: Password is allowed to Remote login via SSH")
+
+                # Case 3: MaxAuthTries >=5 --> report, the max number of tries for password tries if using password to authenticate
+                x = re.search("\nmaxauthtries\s+\d+", contents)    
+                if x:
+                    y = x.group().split()
+                    if int(y[1]) > 4:
+                        result = False
+                        print("ALERT: You are setting Max authentication tries is:", y[1], ".Facing Brute force attack.")
+                
         if (result):
             print("No anonymous activities here!")
         return result
