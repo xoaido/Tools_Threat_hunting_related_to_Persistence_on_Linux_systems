@@ -23,17 +23,12 @@ usage: hunthreat.py [-h] [-a] [-s] [-r] [-c] [-l] [-w] [--dir DIRECTORIES]
                     [--regex REGEX] [--hours HOURS] [--keys KEYS]
 
 options:
-  -h, --help         show this help message and exit
-  -a, --all          Run all scanner
-  -s, --ssh          Run ssh scanner
-  -r, --rootkit      Run rootkit scanner
-  -c, --crontab      Run crontab scanner
-  -l, --loginshell   Run login shell scanner
-  -w, --webshell     Run web web shell scanner
-  --dir DIRECTORIES  Specify the directories to scan web shell
-  --regex REGEX      Specify the filename regex to scan web shell
-  --hours HOURS      Number of hours to scan ssh
-  --keys KEYS        Number of keys to scan ssh
+  * -h, --help         show this help message and exit
+  * -w, --webshell     Run web web shell scanner
+  * --dir DIRECTORIES  Specify the directories to scan web shell
+  * --regex REGEX      Specify the filename regex to scan web shell
+  * --hours HOURS      Number of hours to scan ssh
+  * --keys KEYS        Number of keys to scan ssh
 
 
 Note: 
