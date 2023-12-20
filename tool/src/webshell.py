@@ -97,7 +97,7 @@ def webshellScanner(path, valid_regex, api):
                 + "\n[[ VirusTotal ]]"
                 + colorama.Fore.RESET
             )
-            for x in range(count//2 + 1):
+            for x in range((count+1)//2):
                 servicer = Servicer(rank_sorted[x][0])
                 response = servicer.virustotal()
                 if response == 1:
