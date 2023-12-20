@@ -117,7 +117,7 @@ def main():
         action="store_true",
         dest="is_api",
         default=False,
-        help="Specify the filename to scan web shell with api",
+        help="Use external services APIs",
     )
     args = parser.parse_args()
     # Error on invalid number of arguments
@@ -130,6 +130,7 @@ def main():
         == args.is_webshell
         == False
     ):
+        print("------Invalid input------\n")
         parser.print_help()
         sys.exit(1)
 
