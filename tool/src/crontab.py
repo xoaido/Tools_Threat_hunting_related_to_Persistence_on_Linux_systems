@@ -104,7 +104,7 @@ def crontabScanner():
                      if re.search(r'(\^M|base64|hex|gzip|url|rot13|uuencode)', line):
                           is_encoded = True
                      #Check if the cron string contains any of the listed executable file extensions or not
-                     if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.scath|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
+                     if re.search(r'(\|*sh|\*sh -c|\.php|\.asp|\.aspx|\.bash|\.zsh|\.csh|\.tsch|\.pl|\.py|\.txt|\.cgi|\.cfm|\.htaccess)', line):
                           is_shell_related = True
                     # Check if the cron line contains an invalid schedule (e.g., 30/2, 31/2)
                      if line and (line[0].isdigit() or line[0] == '*'):
