@@ -8,9 +8,9 @@ import colorama
 
 def rootkitScanner():
     # Check for root privileges
-     if os.geteuid() != 0:
-          print("\nThis script must be run as root.")
-          return
+    if os.geteuid() != 0:
+        print("\nThis script must be run as root.")
+        return
     print("\n[*]----------------------[[ RootKit Scan ]]----------------------[*]")
     # Check the loaded modules using the lsmod command, then compare them with the 
     #normal modules in the whitelist, identifying suspiciously loaded modules
