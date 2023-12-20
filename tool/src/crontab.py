@@ -4,6 +4,10 @@ import colorama
 from datetime import datetime
 
 def crontabScanner():
+     # Check for root privileges
+     if os.geteuid() != 0:
+          print("\nThis script must be run as root.")
+          return
      print("\n[*]----------------------[[ CronTab Scan ]]---------------------------[*]")
      def get_username_from_path(path):
      # This function takes a path and returns the username from the path
@@ -30,11 +34,6 @@ def crontabScanner():
      def convert_asterisk_to_one(value):
         # Convert the value of '*' to 1.
         return int(value) if value.isdigit() else 1
-     
-     # Check for root privileges
-     if os.geteuid() != 0:
-          print("This script requires root privileges. Please run it with sudo or as root.")
-          return
 
      # List of paths containing cron files
      cron_paths = ["/etc/crontab"]
