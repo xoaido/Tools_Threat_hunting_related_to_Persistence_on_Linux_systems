@@ -39,3 +39,4 @@ Note:
   * -- hours HOURS: The default interval for checking the last modification of the authorized_keys file is set to 24 hours.
   * -- keys KEYS: The default number of keys that exist in file authorized_keys is 10 keys.
    
+Note: If you want to print the result : sudo python hunthreat.py -a | tee output.txt
