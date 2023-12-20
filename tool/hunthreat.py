@@ -117,7 +117,7 @@ def main():
         action="store_true",
         dest="is_api",
         default=False,
-        help="Use external services APIs",
+        help="Use external services APIs to scan web shell",
     )
     args = parser.parse_args()
     # Error on invalid number of arguments
