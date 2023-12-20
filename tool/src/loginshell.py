@@ -1,5 +1,6 @@
 import os
 import re
+import colorama
 def loginshellScanner():
     print("\n[*]----------------------[[ LoginShell Scan ]]----------------------[*]")
     print("\n[[ Detect directory ]]\n")
@@ -161,7 +162,7 @@ def loginshellScanner():
                     print(encoded_char)
             print("-------------------")
     else:
-        print("No suspicious files found")
+        print(colorama.Fore.LIGHTGREEN_EX + "===> No suspicious files found" + colorama.Fore.RESET)
 
     print("\n[[ Check file ]]\n")
     # List of suspicious patterns for commands
@@ -309,7 +310,7 @@ def loginshellScanner():
                 suspicious_files_found = True
 
         if not suspicious_files_found:
-            print("No suspicious files found")
+            print(colorama.Fore.LIGHTGREEN_EX + "===> No suspicious files found" + colorama.Fore.RESET)
 
     # List of user-specific files 
     user_files = [
