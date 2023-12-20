@@ -2,6 +2,10 @@ import os
 import re
 import colorama
 def loginshellScanner():
+    # Check for root privileges
+     if os.geteuid() != 0:
+          print("\nThis script must be run as root.")
+          return
     print("\n[*]----------------------[[ LoginShell Scan ]]----------------------[*]")
     print("\n[[ Detect directory ]]\n")
     # List of suspicious patterns for commands
